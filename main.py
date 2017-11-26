@@ -24,7 +24,7 @@ class View:
 
 class NQubit:
 
-    def __init__(self, length):
+    def __init__(self, length, state=0):
         """
         Creates the array that represents all "2*length" possible quantum states, given a set of "n" qubits.
 
@@ -35,6 +35,10 @@ class NQubit:
             raise TypeError('The length must be a whole number.')
         elif length < 1:
             raise ValueError('The length can not be equal to or lower than 0.')
+        elif type(state) != IntType and type(state) != LongType:
+            raise TypeError('The state must be specified using whole number.')
+        elif state < 0 or state > pow(2, length):
+            raise ValueError('The state must be within 0 and 2^length-1')
         else:
             # Number of qubits in the sequence.
             self._n = length
@@ -48,7 +52,7 @@ class NQubit:
             for i in range(1, self._n):
                 self._v[i] = 0.0 + 0.0j # Initialize each position of the array.
 
-            self._v[0] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
+            self._v[state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
 
     def apply_gate(self, gate):
         """
@@ -157,19 +161,29 @@ class Gates(Enum):
     H = [1 / sqrt(2), np.array(((1,  1),
                                 (1, -1)), dtype=np.complex_)]
 
+    # G equals C^2(V), as it only converts |1>*|1>*|1> in |1>*|1>*V|1>.
+    G = [1, np.array(((1, 0, 0, 0, 0, 0, 0,  0),
+                      (0, 1, 0, 0, 0, 0, 0,  0),
+                      (0, 0, 1, 0, 0, 0, 0,  0),
+                      (0, 0, 0, 1, 0, 0, 0,  0),
+                      (0, 0, 0, 0, 1, 0, 0,  0),
+                      (0, 0, 0, 0, 0, 1, 0,  0),
+                      (0, 0, 0, 0, 0, 0, 1,  0),
+                      (0, 0, 0, 0, 0, 0, 0, 1j)), dtype=np.complex_)]
+
 
 def main():
 
     view = View()
 
     try:
-        q = NQubit(1)
+        q = NQubit(3, int(pow(2,3)-1))
         view.display(q)
 
-        q.apply_gate(Gates.H)
+        q.apply_gate(Gates.G)
         view.display(q)
 
-        q.apply_gate(Gates.H)
+        q.apply_gate(Gates.G)
         view.display(q)
     except(ValueError, TypeError) as e:
         logging.warning(str(e))
