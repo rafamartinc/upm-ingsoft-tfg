@@ -5,7 +5,7 @@ import numpy as np
 import logging
 
 from view import View
-from model import NQubit, GateFunctions
+from model import NQubit, Gates
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -13,16 +13,12 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 def main():
 
     view = View()
-    g = GateFunctions()
 
     try:
-        q = NQubit(3, 7)
+        q = NQubit(1, 1)
         view.display(q)
 
-        g.gate_g(q)
-        view.display(q)
-
-        g.gate_g(q)
+        Gates.gate_z(q)
         view.display(q)
 
     except(ValueError, TypeError) as e:

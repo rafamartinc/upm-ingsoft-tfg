@@ -37,9 +37,10 @@ class Gate:
     length = property(_get_length)
 
 
-class GateFunctions:
+class Gates:
 
-    def gate_h(self, nqubit):
+    @staticmethod
+    def gate_h(nqubit):
         """
         Implements the Hadamard Quantum Gate.
 
@@ -56,7 +57,35 @@ class GateFunctions:
         else:
             nqubit.apply_gate(gate)
 
-    def gate_g(self, nqubit):
+    @staticmethod
+    def gate_v(nqubit, controls=0):
+        """
+        Implements the C^k(V) Quantum Gate, being 'k' the number of controls.
+        Therefore:
+            controls = 0 -> C^0(V) = V, acts on |1>
+            controls = 1 -> C^1(V) = C(V), acts on |1>|1>
+            controls = 2 -> C^2(V) = G, acts on |1>|1>|1>
+
+        :return: Resulting nqubit.
+        """
+
+        if not isinstance(nqubit, NQubit):
+            raise TypeError('The given parameter must be a n-qubit.')
+        elif controls + 1 > nqubit.n:
+            raise ValueError('A ' + str(nqubit.n) + '-qubit does not have enough qubits to use ' + str(controls) + ' as controls.')
+        else:
+            matrix = np.identity(int(pow(2, nqubit.n)), dtype=np.complex_)
+
+            target_state = int(pow(2, controls+1) - 1)
+
+            matrix[target_state][target_state] = 0 + 1j
+
+            gate = Gate(1, matrix)
+
+            nqubit.apply_gate(gate)
+
+    @staticmethod
+    def gate_g(nqubit):
         """
         Implements the G Quantum Gate.
         G equals C^2(V), as it only converts |1>*|1>*|1> in |1>*|1>*V|1>.
@@ -64,22 +93,31 @@ class GateFunctions:
         :return: Resulting nqubit.
         """
 
-        gate = Gate(1, np.array(((1, 0, 0, 0, 0, 0, 0,  0),
-                                 (0, 1, 0, 0, 0, 0, 0,  0),
-                                 (0, 0, 1, 0, 0, 0, 0,  0),
-                                 (0, 0, 0, 1, 0, 0, 0,  0),
-                                 (0, 0, 0, 0, 1, 0, 0,  0),
-                                 (0, 0, 0, 0, 0, 1, 0,  0),
-                                 (0, 0, 0, 0, 0, 0, 1,  0),
-                                 (0, 0, 0, 0, 0, 0, 0, 1j)), dtype=np.complex_))
+        if not isinstance(nqubit, NQubit):
+            raise TypeError('The given parameter must be a n-qubit.')
+        elif nqubit.n != 3:
+            raise ValueError('This gate can only be used to 3-qubits, ' + str(nqubit.n) + ' qubits found.')
+        else:
+            # Apply the V gate to the |1>*|1>*|1>=|7> state
+            Gates.gate_v(nqubit, 2)
+
+    @staticmethod
+    def gate_z(nqubit):
+        """
+        Implements the Z Quantum Gate.
+        Z equals V^2, as it negates the real part of the last quantum state.
+
+        :return: Resulting nqubit.
+        """
 
         if not isinstance(nqubit, NQubit):
             raise TypeError('The given parameter must be a n-qubit.')
-        elif gate.length != nqubit.n:
-            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(nqubit.n) + ' qubits found.')
+        elif nqubit.n != 1:
+            raise ValueError('This gate can only be used to 1 qubit, ' + str(nqubit.n) + ' qubits found.')
         else:
-            nqubit.apply_gate(gate)
-
+            # Apply Z as V^2
+            Gates.gate_v(nqubit, 0)
+            Gates.gate_v(nqubit, 0)
 
 class NQubit:
 
