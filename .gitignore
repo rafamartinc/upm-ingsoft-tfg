@@ -6,3 +6,4 @@
 ### Other files ###
 sonar.bat
 .scannerwork
+*.pyc
