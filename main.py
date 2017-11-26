@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from types import IntType, LongType
+from types import IntType, LongType, FloatType
 from math import log, pow, sqrt
-from enum import Enum
 import numpy as np
 import logging
 
@@ -20,7 +19,6 @@ class View:
         """
 
         print(str(o))
-
 
 class NQubit:
 
@@ -54,6 +52,10 @@ class NQubit:
 
             self._v[state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
 
+    def _get_n(self):
+        return self._n
+    n = property(_get_n)
+
     def apply_gate(self, gate):
         """
         Applies the specified gate to the n-qubit, if possible.
@@ -61,16 +63,16 @@ class NQubit:
         :param gate : Gate to be applied.
         """
 
-        if not isinstance(gate, Gates):
+        if not isinstance(gate, Gate):
             raise TypeError('The given parameter must be a quantum gate.')
-        elif len(gate.value[1]) != pow(2, self._n):
-            raise ValueError('This gate can only be used to ' + str(log(len(gate.value[1]), 2)) + '-qubits, ' + str(self._n) + ' qubits found.')
+        elif gate.length != self._n:
+            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self._n) + ' qubits found.')
         else:
             # Multiply matrices.
-            self._v = np.dot(gate.value[1], self._v)
+            self._v = np.dot(gate.matrix, self._v)
 
             # Update normalization factor.
-            self._f *= gate.value[0]
+            self._f *= gate.factor
 
             # Normalize by looking for the GCD (Greatest common divisor).
             self._normalize()
@@ -127,8 +129,10 @@ class NQubit:
             valid = False
             while not valid and gcd > 1:
 
+                valid = self._is_gcd_valid(gcd)
+
                 # Once the GCD is located, divide all Gaussian whole numbers and update the normalization factor.
-                if self._is_gcd_valid(gcd):
+                if valid:
                     result = gcd
                 else:
                     gcd -= 1
@@ -155,36 +159,94 @@ class NQubit:
 
         return str(self._v) + " * " + str(self._f)
 
+class Gate:
 
-class Gates(Enum):
+    def __init__(self, factor, matrix):
 
-    H = [1 / sqrt(2), np.array(((1,  1),
-                                (1, -1)), dtype=np.complex_)]
+        if type(factor) != IntType and type(factor) != LongType and type(factor) != FloatType:
+            raise TypeError('The normalization factor must be a number.')
+        elif not isinstance(matrix, np.ndarray):
+            raise TypeError("The gate's matrix must be a 2D list")
+        else:
+            self._length = int(log(len(matrix), 2))
 
-    # G equals C^2(V), as it only converts |1>*|1>*|1> in |1>*|1>*V|1>.
-    G = [1, np.array(((1, 0, 0, 0, 0, 0, 0,  0),
-                      (0, 1, 0, 0, 0, 0, 0,  0),
-                      (0, 0, 1, 0, 0, 0, 0,  0),
-                      (0, 0, 0, 1, 0, 0, 0,  0),
-                      (0, 0, 0, 0, 1, 0, 0,  0),
-                      (0, 0, 0, 0, 0, 1, 0,  0),
-                      (0, 0, 0, 0, 0, 0, 1,  0),
-                      (0, 0, 0, 0, 0, 0, 0, 1j)), dtype=np.complex_)]
+            for i in matrix:
+                if int(log(len(i), 2)) != self._length:
+                    raise ValueError('Wrong matrix size.')
 
+            self._factor = factor
+            self._matrix = matrix
+
+    def _get_factor(self):
+        return self._factor
+    factor = property(_get_factor)
+
+    def _get_matrix(self):
+        return self._matrix
+    matrix = property(_get_matrix)
+
+    def _get_length(self):
+        return self._length
+    length = property(_get_length)
+
+class GateFunctions:
+
+    def gate_h(self, nqubit):
+        """
+        Implements the Hadamard Quantum Gate.
+
+        :return: Resulting nqubit.
+        """
+
+        gate = Gate(1 / sqrt(2), np.array(((1,  1),
+                                           (1, -1)), dtype=np.complex_))
+
+        if not isinstance(nqubit, NQubit):
+            raise TypeError('The given parameter must be a n-qubit.')
+        elif gate.length != nqubit.n:
+            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(nqubit.n) + ' qubits found.')
+        else:
+            nqubit.apply_gate(gate)
+
+    def gate_g(self, nqubit):
+        """
+        Implements the G Quantum Gate.
+        G equals C^2(V), as it only converts |1>*|1>*|1> in |1>*|1>*V|1>.
+
+        :return: Resulting nqubit.
+        """
+
+        gate = Gate(1, np.array(((1, 0, 0, 0, 0, 0, 0,  0),
+                                 (0, 1, 0, 0, 0, 0, 0,  0),
+                                 (0, 0, 1, 0, 0, 0, 0,  0),
+                                 (0, 0, 0, 1, 0, 0, 0,  0),
+                                 (0, 0, 0, 0, 1, 0, 0,  0),
+                                 (0, 0, 0, 0, 0, 1, 0,  0),
+                                 (0, 0, 0, 0, 0, 0, 1,  0),
+                                 (0, 0, 0, 0, 0, 0, 0, 1j)), dtype=np.complex_))
+
+        if not isinstance(nqubit, NQubit):
+            raise TypeError('The given parameter must be a n-qubit.')
+        elif gate.length != nqubit.n:
+            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(nqubit.n) + ' qubits found.')
+        else:
+            nqubit.apply_gate(gate)
 
 def main():
 
     view = View()
+    g = GateFunctions()
 
     try:
-        q = NQubit(3, int(pow(2,3)-1))
+        q = NQubit(3, 7)
         view.display(q)
 
-        q.apply_gate(Gates.G)
+        g.gate_g(q)
         view.display(q)
 
-        q.apply_gate(Gates.G)
+        g.gate_g(q)
         view.display(q)
+
     except(ValueError, TypeError) as e:
         logging.warning(str(e))
 
