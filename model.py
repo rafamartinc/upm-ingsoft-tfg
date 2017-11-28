@@ -44,6 +44,8 @@ class Gates:
         """
         Implements the Hadamard Quantum Gate.
 
+        Source: https://en.wikipedia.org/wiki/Quantum_gate#Hadamard_gate
+
         :return: Resulting nqubit.
         """
 
@@ -104,8 +106,10 @@ class Gates:
     @staticmethod
     def gate_z(nqubit):
         """
-        Implements the Z Quantum Gate.
+        Implements the Pauli-Z Quantum Gate. It equates to a rotation around the Z-axis of the Bloch sphere by π radians.
         Z equals V^2, as it negates the real part of the last quantum state.
+
+        Source: https://en.wikipedia.org/wiki/Quantum_gate#Pauli-Z_gate
 
         :return: Resulting nqubit.
         """
