@@ -104,7 +104,7 @@ class Gates:
             Gates.gate_v(nqubit, 2)
 
     @staticmethod
-    def gate_z(nqubit):
+    def gate_z(nqubit, controls=0):
         """
         Implements the Pauli-Z Quantum Gate. It equates to a rotation around the Z-axis of the Bloch sphere by π radians.
         Z equals V^2, as it negates the real part of the last quantum state.
@@ -116,12 +116,34 @@ class Gates:
 
         if not isinstance(nqubit, NQubit):
             raise TypeError('The given parameter must be a n-qubit.')
+        elif controls + 1 > nqubit.n:
+            raise ValueError('A ' + str(nqubit.n) + '-qubit does not have enough qubits to use ' + str(controls) + ' as controls.')
+        else:
+            # Apply C^k(Z) as (C^k(V))^2
+            Gates.gate_v(nqubit, controls)
+            Gates.gate_v(nqubit, controls)
+
+    @staticmethod
+    def gate_x(nqubit):
+        """
+        Implements the Pauli-X Quantum Gate. It equates to a rotation of the Bloch sphere around the X-axis by π
+        radians. It maps |0> to |1> and |1> to |0>. Due to this nature, it is sometimes called bit-flip.
+
+        Source: https://en.wikipedia.org/wiki/Quantum_gate#Pauli-X_gate_(=_NOT_gate)
+
+        :return: Resulting nqubit.
+        """
+
+        if not isinstance(nqubit, NQubit):
+            raise TypeError('The given parameter must be a n-qubit.')
         elif nqubit.n != 1:
             raise ValueError('This gate can only be used to 1 qubit, ' + str(nqubit.n) + ' qubits found.')
         else:
-            # Apply Z as V^2
-            Gates.gate_v(nqubit, 0)
-            Gates.gate_v(nqubit, 0)
+            # Apply X as HZH
+            Gates.gate_h(nqubit, 0)
+            Gates.gate_z(nqubit, 0)
+            Gates.gate_h(nqubit, 0)
+
 
 class NQubit:
 
