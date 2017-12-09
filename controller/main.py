@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from types import IntType, LongType
-from math import pow, sqrt
-import numpy as np
 import logging
 
-from view import View
-from model import NQubit, Gates
+from view.view import View
+from model.nqubit import NQubit
+from controller.gates import Gates
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -18,7 +16,7 @@ def main():
         q = NQubit(1, 1)
         view.display(q)
 
-        Gates.gate_z(q)
+        Gates.gate_h(q)
         view.display(q)
 
     except(ValueError, TypeError) as e:
