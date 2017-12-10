@@ -23,6 +23,9 @@ def main():
         Gates.gate_h(q, s)
         view.display(q)
 
+        Gates.gate_v(q, s)
+        view.display(q)
+
     except(ValueError, TypeError) as e:
         logging.warning(str(e))
 

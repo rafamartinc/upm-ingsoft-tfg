@@ -20,7 +20,6 @@ class Gates:
         :return: Resulting nqubit.
         """
 
-
         if not isinstance(nqubit, NQubit):
             raise TypeError('The first parameter must be a NQubit instance.')
         if not isinstance(sequence, Sequence):
@@ -41,30 +40,30 @@ class Gates:
             nqubit.apply_gate(gate)
 
     @staticmethod
-    def gate_v(nqubit, controls=0):
+    def gate_v(nqubit, sequence):
         """
-        Implements the C^k(V) Quantum Gate, being 'k' the number of controls.
-        Therefore:
-            controls = 0 -> C^0(V) = V, acts on |1>
-            controls = 1 -> C^1(V) = C(V), acts on |1>|1>
-            controls = 2 -> C^2(V) = G, acts on |1>|1>|1>
+        Implements the V Quantum Gate.
 
         :return: Resulting nqubit.
         """
 
         if not isinstance(nqubit, NQubit):
             raise TypeError('The first parameter must be a NQubit instance.')
-        elif controls + 1 > nqubit.n:
-            raise ValueError('A ' + str(nqubit.n) + '-qubit does not have enough qubits to use ' + str(controls) + ' as controls.')
+        if not isinstance(sequence, Sequence):
+            raise TypeError('The second parameter must be a Sequence instance.')
+        elif sequence.n != nqubit.n:
+            raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
-            matrix = np.identity(int(pow(2, nqubit.n)), dtype=np.complex_)
+            gate_matrix = np.identity(int(pow(2, nqubit.n)), dtype=np.complex)
+            base_matrix = np.array(((1,  0),
+                                    (0, 1j)), dtype=np.complex_)
+            targets = sequence.get_decimal_states()
 
-            target_state = int(pow(2, controls+1) - 1)
+            for i in range(2):
+                for j in range(2):
+                    gate_matrix[targets[i]][targets[j]] = base_matrix[i][j]
 
-            matrix[target_state][target_state] = 0 + 1j
-
-            gate = Gate(1, matrix)
-
+            gate = Gate(1, gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -81,11 +80,12 @@ class Gates:
         elif nqubit.n != 3:
             raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.n) + ' qubits found.')
         else:
+            seq = Sequence('1', '1', 'G')
             # Apply the V gate to the |1>*|1>*|1>=|7> state
-            Gates.gate_v(nqubit, 2)
+            Gates.gate_v(nqubit, seq)
 
     @staticmethod
-    def gate_z(nqubit, controls=0):
+    def gate_z(nqubit, sequence):
         """
         Implements the Pauli-Z Quantum Gate. It equates to a rotation around the Z-axis of the Bloch sphere by π radians.
         Z equals V^2, as it negates the real part of the last quantum state.
@@ -97,15 +97,17 @@ class Gates:
 
         if not isinstance(nqubit, NQubit):
             raise TypeError('The first parameter must be a NQubit instance.')
-        elif controls + 1 > nqubit.n:
-            raise ValueError('A ' + str(nqubit.n) + '-qubit does not have enough qubits to use ' + str(controls) + ' as controls.')
+        if not isinstance(sequence, Sequence):
+            raise TypeError('The second parameter must be a Sequence instance.')
+        elif sequence.n != nqubit.n:
+            raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             # Apply C^k(Z) as (C^k(V))^2
-            Gates.gate_v(nqubit, controls)
-            Gates.gate_v(nqubit, controls)
+            Gates.gate_v(nqubit, sequence)
+            Gates.gate_v(nqubit, sequence)
 
     @staticmethod
-    def gate_x(nqubit):
+    def gate_x(nqubit, sequence):
         """
         Implements the Pauli-X Quantum Gate. It equates to a rotation of the Bloch sphere around the X-axis by π
         radians. It maps |0> to |1> and |1> to |0>. Due to this nature, it is sometimes called bit-flip.
@@ -117,13 +119,15 @@ class Gates:
 
         if not isinstance(nqubit, NQubit):
             raise TypeError('The first parameter must be a NQubit instance.')
-        elif nqubit.n != 1:
-            raise ValueError('This gate can only be applied to 1 qubit, ' + str(nqubit.n) + ' qubits found.')
+        if not isinstance(sequence, Sequence):
+            raise TypeError('The second parameter must be a Sequence instance.')
+        elif sequence.n != nqubit.n:
+            raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             # Apply X as HZH
-            Gates.gate_h(nqubit, 0)
-            Gates.gate_z(nqubit, 0)
-            Gates.gate_h(nqubit, 0)
+            Gates.gate_h(nqubit, sequence)
+            Gates.gate_z(nqubit, sequence)
+            Gates.gate_h(nqubit, sequence)
 
     @staticmethod
     def gate_toffoli(nqubit):
@@ -141,5 +145,6 @@ class Gates:
         elif nqubit.n != 1:
             raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.n) + ' qubits found.')
         else:
+            seq = Sequence('1', '1', 'G')
             # Apply X as HZH
-            Gates.gate_x(nqubit, 2)
+            Gates.gate_x(nqubit, seq)
