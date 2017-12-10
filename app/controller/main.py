@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from view.view import View
-from model.nqubit import NQubit
-from model.sequence import Sequence
-from controller.gates import Gates
+from app.view.view import View
+from app.model.nqubit import NQubit
+from app.model.sequence import Sequence
+from gates import Gates
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 

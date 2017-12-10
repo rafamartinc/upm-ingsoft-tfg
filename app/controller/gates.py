@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from math import sqrt
+
 import numpy as np
-from model.gate import Gate
-from model.nqubit import NQubit
-from model.sequence import Sequence
+
+from app.model.gate import Gate
+from app.model.nqubit import NQubit
+from app.model.sequence import Sequence
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
