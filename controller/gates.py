@@ -3,6 +3,7 @@ from math import sqrt
 import numpy as np
 from model.gate import Gate
 from model.nqubit import NQubit
+from model.sequence import Sequence
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -10,7 +11,7 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 class Gates:
 
     @staticmethod
-    def gate_h(nqubit):
+    def gate_h(nqubit, sequence):
         """
         Implements the Hadamard Quantum Gate.
 
@@ -19,14 +20,24 @@ class Gates:
         :return: Resulting nqubit.
         """
 
-        gate = Gate(1 / sqrt(2), np.array(((1,  1),
-                                           (1, -1)), dtype=np.complex_))
 
         if not isinstance(nqubit, NQubit):
-            raise TypeError('The given parameter must be a n-qubit.')
-        elif gate.length != nqubit.n:
-            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(nqubit.n) + ' qubits found.')
+            raise TypeError('The first parameter must be a NQubit instance.')
+        if not isinstance(sequence, Sequence):
+            raise TypeError('The second parameter must be a Sequence instance.')
+        elif sequence.n != nqubit.n:
+            raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
+            gate_matrix = np.identity(int(pow(2, nqubit.n)), dtype=np.complex)
+            base_matrix = np.array(((1,  1),
+                                    (1, -1)), dtype=np.complex_)
+            targets = sequence.get_decimal_states()
+
+            for i in range(2):
+                for j in range(2):
+                    gate_matrix[targets[i]][targets[j]] = base_matrix[i][j]
+
+            gate = Gate(1 / sqrt(2), gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -42,7 +53,7 @@ class Gates:
         """
 
         if not isinstance(nqubit, NQubit):
-            raise TypeError('The given parameter must be a n-qubit.')
+            raise TypeError('The first parameter must be a NQubit instance.')
         elif controls + 1 > nqubit.n:
             raise ValueError('A ' + str(nqubit.n) + '-qubit does not have enough qubits to use ' + str(controls) + ' as controls.')
         else:
@@ -66,7 +77,7 @@ class Gates:
         """
 
         if not isinstance(nqubit, NQubit):
-            raise TypeError('The given parameter must be a n-qubit.')
+            raise TypeError('The first parameter must be a NQubit instance.')
         elif nqubit.n != 3:
             raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.n) + ' qubits found.')
         else:
@@ -85,7 +96,7 @@ class Gates:
         """
 
         if not isinstance(nqubit, NQubit):
-            raise TypeError('The given parameter must be a n-qubit.')
+            raise TypeError('The first parameter must be a NQubit instance.')
         elif controls + 1 > nqubit.n:
             raise ValueError('A ' + str(nqubit.n) + '-qubit does not have enough qubits to use ' + str(controls) + ' as controls.')
         else:
@@ -105,7 +116,7 @@ class Gates:
         """
 
         if not isinstance(nqubit, NQubit):
-            raise TypeError('The given parameter must be a n-qubit.')
+            raise TypeError('The first parameter must be a NQubit instance.')
         elif nqubit.n != 1:
             raise ValueError('This gate can only be applied to 1 qubit, ' + str(nqubit.n) + ' qubits found.')
         else:
@@ -126,7 +137,7 @@ class Gates:
         """
 
         if not isinstance(nqubit, NQubit):
-            raise TypeError('The given parameter must be a n-qubit.')
+            raise TypeError('The first parameter must be a NQubit instance.')
         elif nqubit.n != 1:
             raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.n) + ' qubits found.')
         else:

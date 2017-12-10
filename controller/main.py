@@ -14,14 +14,14 @@ def main():
     view = View()
 
     try:
-        """q = NQubit(1, 1)
+        s = Sequence('G', '1', '0')
+        view.display(s)
+
+        q = NQubit(3, 6)
         view.display(q)
 
-        Gates.gate_h(q)
-        view.display(q)"""
-
-        s = Sequence('G', 1, 0)
-        view.display(s)
+        Gates.gate_h(q, s)
+        view.display(q)
 
     except(ValueError, TypeError) as e:
         logging.warning(str(e))
