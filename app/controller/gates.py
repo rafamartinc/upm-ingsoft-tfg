@@ -3,7 +3,7 @@ from math import sqrt
 
 import numpy as np
 
-from app.model.gate import Gate
+from app.model.gatematrix import GateMatrix
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
 
@@ -38,7 +38,7 @@ class Gates:
                 for j in range(2):
                     gate_matrix[targets[i]][targets[j]] = base_matrix[i][j]
 
-            gate = Gate(1 / sqrt(2), gate_matrix)
+            gate = GateMatrix(1 / sqrt(2), gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -65,7 +65,7 @@ class Gates:
                 for j in range(2):
                     gate_matrix[targets[i]][targets[j]] = base_matrix[i][j]
 
-            gate = Gate(1, gate_matrix)
+            gate = GateMatrix(1, gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod

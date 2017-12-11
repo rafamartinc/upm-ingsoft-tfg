@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from types import IntType, LongType
 import numpy as np
-from gate import Gate
+from gatematrix import GateMatrix
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -49,7 +49,7 @@ class NQubit:
         :param gate : Gate to be applied.
         """
 
-        if not isinstance(gate, Gate):
+        if not isinstance(gate, GateMatrix):
             raise TypeError('The given parameter must be a quantum gate.')
         elif gate.length != self._n:
             raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self._n) + ' qubits found.')

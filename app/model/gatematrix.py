@@ -6,19 +6,19 @@ import numpy as np
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
 
-class Gate:
+class GateMatrix:
 
     def __init__(self, factor, matrix):
 
         if type(factor) != IntType and type(factor) != LongType and type(factor) != FloatType:
             raise TypeError('The normalization factor must be a number.')
-        elif not isinstance(matrix, np.ndarray):
+        elif not isinstance(matrix, np.matrix):
             raise TypeError("The gate's matrix must be a 2D list")
         else:
             self._length = int(log(len(matrix), 2))
 
             for i in matrix:
-                if int(log(len(i), 2)) != self._length:
+                if len(i) != len(matrix):
                     raise ValueError('Wrong matrix size.')
 
             self._factor = factor
