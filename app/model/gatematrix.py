@@ -13,14 +13,13 @@ class GateMatrix:
         if type(factor) != IntType and type(factor) != LongType and type(factor) != FloatType:
             raise TypeError('The normalization factor must be a number.')
         elif not isinstance(matrix, np.matrix):
-            raise TypeError("The gate's matrix must be a 2D list")
+            raise TypeError("The gate's matrix must be a Numpy 2D matrix.")
+        elif matrix.shape[0] != matrix.shape[1]:
+            raise ValueError("The gate's matrix must be squared.")
+        elif log(matrix.shape[0], 2) % 1 != 0 or matrix.shape[0] == 1:
+            raise ValueError("Wrong matrix size, must be a natural power of two.")
         else:
             self._length = int(log(len(matrix), 2))
-
-            for i in matrix:
-                if len(i) != len(matrix):
-                    raise ValueError('Wrong matrix size.')
-
             self._factor = factor
             self._matrix = matrix
 
