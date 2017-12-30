@@ -29,16 +29,16 @@ class Gates:
         elif sequence.n != nqubit.n:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
-            gate_matrix = np.identity(int(pow(2, nqubit.n)), dtype=np.complex)
-            base_matrix = np.array(((1,  1),
-                                    (1, -1)), dtype=np.complex_)
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.n)), dtype=np.complex))
+            base_matrix = np.matrix([[1,  1],
+                                     [1, -1]], dtype=np.complex_)
             targets = sequence.get_decimal_states()
 
             for i in range(2):
                 for j in range(2):
-                    gate_matrix[targets[i]][targets[j]] = base_matrix[i][j]
+                    gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
 
-            gate = GateMatrix(1 / sqrt(2), gate_matrix)
+            gate = GateMatrix(1, gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -56,16 +56,16 @@ class Gates:
         elif sequence.n != nqubit.n:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
-            gate_matrix = np.identity(int(pow(2, nqubit.n)), dtype=np.complex)
-            base_matrix = np.array(((1,  0),
-                                    (0, 1j)), dtype=np.complex_)
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.n)), dtype=np.complex))
+            base_matrix = np.matrix([[1,  0],
+                                     [0, 1j]], dtype=np.complex_)
             targets = sequence.get_decimal_states()
 
             for i in range(2):
                 for j in range(2):
-                    gate_matrix[targets[i]][targets[j]] = base_matrix[i][j]
+                    gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
 
-            gate = GateMatrix(1, gate_matrix)
+            gate = GateMatrix(0, gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod

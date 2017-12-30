@@ -9,39 +9,39 @@ class TestGateMatrix(TestCase):
 
     def setUp(self):
         self.matrix1x1 = np.matrix(1, dtype=np.complex_)
-        self.matrix2x2 = np.matrix(((1, 1),
-                                    (1, 1)), dtype=np.complex)
-        self.matrix2x3 = np.matrix(((1, 1, 1),
-                                    (1, 1, 1)), dtype=np.complex_)
-        self.matrix3x2 = np.matrix(((1, 1),
-                                    (1, 1),
-                                    (1, 1)), dtype=np.complex_)
-        self.matrix3x3 = np.matrix(((1, 1, 1),
-                                    (1, 1, 1),
-                                    (1, 1, 1)), dtype=np.complex_)
-        self.matrix4x4 = np.matrix(((1, 1, 1, 1),
-                                    (1, 1, 1, 1),
-                                    (1, 1, 1, 1),
-                                    (1, 1, 1, 1)), dtype=np.complex_)
-        self.matrix5x5 = np.matrix(((1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1)), dtype=np.complex_)
-        self.matrix6x6 = np.matrix(((1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1)), dtype=np.complex_)
-        self.matrix8x8 = np.matrix(((1, 1, 1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1, 1, 1),
-                                    (1, 1, 1, 1, 1, 1, 1, 1)), dtype=np.complex_)
+        self.matrix2x2 = np.matrix([[1, 1],
+                                    [1, 1]], dtype=np.complex)
+        self.matrix2x3 = np.matrix([[1, 1, 1],
+                                    [1, 1, 1]], dtype=np.complex_)
+        self.matrix3x2 = np.matrix([[1, 1],
+                                    [1, 1],
+                                    [1, 1]], dtype=np.complex_)
+        self.matrix3x3 = np.matrix([[1, 1, 1],
+                                    [1, 1, 1],
+                                    [1, 1, 1]], dtype=np.complex_)
+        self.matrix4x4 = np.matrix([[1, 1, 1, 1],
+                                    [1, 1, 1, 1],
+                                    [1, 1, 1, 1],
+                                    [1, 1, 1, 1]], dtype=np.complex_)
+        self.matrix5x5 = np.matrix([[1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1]], dtype=np.complex_)
+        self.matrix6x6 = np.matrix([[1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1]], dtype=np.complex_)
+        self.matrix8x8 = np.matrix([[1, 1, 1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1, 1, 1],
+                                    [1, 1, 1, 1, 1, 1, 1, 1]], dtype=np.complex_)
 
         self.g1a = GateMatrix(-5, self.matrix2x2)
         self.g2a = GateMatrix(-1, self.matrix2x2)

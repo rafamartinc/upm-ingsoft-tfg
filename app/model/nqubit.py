@@ -28,15 +28,15 @@ class NQubit:
             self._n = length
 
             # Vector of n qubits, as Gaussian whole numbers.
-            self._v = np.zeros(int(pow(2, self._n)), dtype=np.complex_)
+            self._v = np.matrix(np.zeros(int(pow(2, self._n)), dtype=np.complex_))
 
-            # Normalization factor.
-            self._f = 1.0
+            # Normalization factor: [sqrt(2)]^(-k). Starts as sqrt(2)^(-0) = 1
+            self._k = 0
 
             for i in range(1, self._n):
-                self._v[i] = 0.0 + 0.0j # Initialize each position of the array.
+                self._v[0,i] = 0.0 + 0.0j # Initialize each position of the array.
 
-            self._v[state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
+            self._v[0,state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
 
     def _get_n(self):
         return self._n
@@ -55,86 +55,10 @@ class NQubit:
             raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self._n) + ' qubits found.')
         else:
             # Multiply matrices.
-            self._v = np.dot(gate.matrix, self._v)
+            self._v = self._v.dot(gate.matrix)
 
             # Update normalization factor.
-            self._f *= gate.factor
-
-            # Normalize by looking for the GCD (Greatest common divisor).
-            self._normalize()
-
-    def _find_minimum(self):
-        """
-        Finds the minimum non-zero and absolute value of all coefficients within the Gaussian whole numbers.
-        This method is normally used to find the GCD (Greatest common divisor) of all coefficients.
-        """
-
-        result = 0
-        non_zeros = []
-
-        # The maximum GCD (Greatest common divisor) will not be greater than the minimum non-zero absolute
-        # value of the vector of Gaussian whole numbers. So let's find that minimum.
-
-        # Look for all non-zero coefficients.
-        for i in range(int(pow(2, self._n))):
-            for j in [self._v[i].real, self._v[i].imag]:
-                if j != 0 and abs(j) not in non_zeros:
-                    non_zeros.append(abs(j))
-
-        if len(non_zeros) > 0:
-            result = min(non_zeros)
-
-        return result
-
-    def _is_gcd_valid(self, gcd):
-        """
-        Checks whether the given number qualifies as GCD (Greatest common divisor) of all
-        coefficients within the Gaussian whole numbers of the quantum state.
-        """
-
-        valid = True
-
-        j = 1
-        while j < pow(2, self._n) and valid:
-            if self._v[j].real % gcd != 0 or self._v[j].imag % gcd != 0:
-                valid = False
-            j += 1
-
-        return valid
-
-    def _find_gcd(self):
-        """
-        Finds the GCD (Greatest common divisor) of all coefficients within the Gaussian whole numbers.
-        """
-
-        result = 1
-
-        gcd = self._find_minimum()
-        if gcd != 0:
-            # When found, start decreasing from that one until the GCD is found.
-            valid = False
-            while not valid and gcd > 1:
-
-                valid = self._is_gcd_valid(gcd)
-
-                # Once the GCD is located, divide all Gaussian whole numbers and update the normalization factor.
-                if valid:
-                    result = gcd
-                else:
-                    gcd -= 1
-
-        return result
-
-    def _normalize(self):
-        """
-        Normalizes the Gaussian whole numbers of the quantum state.
-        """
-
-        gcd = self._find_gcd()
-
-        for j in range(int(pow(2, self._n))):
-            self._v[j] = np.complex(self._v[j].real / gcd, self._v[j].imag / gcd)
-        self._f *= gcd
+            self._k += gate.factor
 
     def __repr__(self):
         """
@@ -143,4 +67,4 @@ class NQubit:
         :return: Resulting string.
         """
 
-        return str(self._v) + " * " + str(self._f)
+        return str(self._v) + " * sqrt(2)^(-" + str(self._k) + ")"

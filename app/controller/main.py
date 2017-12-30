@@ -14,16 +14,25 @@ def main():
     view = View()
 
     try:
-        s = Sequence('G', '1', '0')
+        s = Sequence('1', '1', 'G')
         view.display(s)
 
-        q = NQubit(3, 6)
+        q = NQubit(3, 7)
         view.display(q)
 
         Gates.gate_h(q, s)
         view.display(q)
 
         Gates.gate_v(q, s)
+        view.display(q)
+
+        Gates.gate_h(q, s)
+        view.display(q)
+
+        Gates.gate_v(q, s)
+        view.display(q)
+
+        Gates.gate_h(q, s)
         view.display(q)
 
     except(ValueError, TypeError) as e:
