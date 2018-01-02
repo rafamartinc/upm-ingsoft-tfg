@@ -8,9 +8,9 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 
 class GateMatrix:
 
-    def __init__(self, factor, matrix):
+    def __init__(self, k, matrix):
 
-        if type(factor) != IntType and type(factor) != LongType and type(factor) != FloatType:
+        if type(k) != IntType and type(k) != LongType and type(k) != FloatType:
             raise TypeError('The normalization factor must be a number.')
         elif not isinstance(matrix, np.matrix):
             raise TypeError("The gate's matrix must be a Numpy 2D matrix.")
@@ -20,12 +20,12 @@ class GateMatrix:
             raise ValueError("Wrong matrix size, must be a natural power of two.")
         else:
             self._length = int(log(len(matrix), 2))
-            self._factor = factor
+            self._k = k
             self._matrix = matrix
 
-    def _get_factor(self):
-        return self._factor
-    factor = property(_get_factor)
+    def _get_k(self):
+        return self._k
+    k = property(_get_k)
 
     def _get_matrix(self):
         return self._matrix

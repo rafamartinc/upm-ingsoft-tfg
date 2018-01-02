@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from types import IntType, LongType
+from math import log
 import numpy as np
 from gatematrix import GateMatrix
 
@@ -15,32 +16,69 @@ class NQubit:
         :param length: Number of qubits that the n-qubit vector has.
         """
 
-        if type(length) != IntType and type(length) != LongType:
-            raise TypeError('The length must be a whole number.')
-        elif length < 1:
-            raise ValueError('The length can not be equal to or lower than 0.')
-        elif type(state) != IntType and type(state) != LongType:
+        self._check_length(length) # May raise an exception.
+
+        if type(state) != IntType and type(state) != LongType:
             raise TypeError('The state must be specified using whole number.')
-        elif state < 0 or state > pow(2, length):
+        elif state < 0 or state > pow(2, length) - 1:
             raise ValueError('The state must be within 0 and 2^length-1')
         else:
             # Number of qubits in the sequence.
-            self._n = length
+            self.n = length
 
             # Vector of n qubits, as Gaussian whole numbers.
-            self._v = np.matrix(np.zeros(int(pow(2, self._n)), dtype=np.complex_))
+            self.v = np.matrix(np.zeros(int(pow(2, self.n)), dtype=np.complex_))
 
             # Normalization factor: [sqrt(2)]^(-k). Starts as sqrt(2)^(-0) = 1
-            self._k = 0
+            self.k = 0
 
-            for i in range(1, self._n):
-                self._v[0,i] = 0.0 + 0.0j # Initialize each position of the array.
+            for i in range(1, self.n):
+                self.v[0,i] = 0.0 + 0.0j # Initialize each position of the array.
 
-            self._v[0,state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
+            self.v[0,state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
 
-    def _get_n(self):
+    @property
+    def v(self):
+        """
+        v is a property
+        This is the getter method
+        """
+        return self._v
+
+    @v.setter
+    def v(self, vector):
+        """
+        This is the setter method
+        """
+        if not isinstance(vector, np.matrix):
+            raise TypeError("The n-qubit vector must be a Numpy 2D matrix.")
+        else:
+            self._v = vector
+            self._n = log(vector.size, 2)
+            print self.n
+
+    @property
+    def k(self):
+        """
+        k is a property
+        This is the getter method
+        """
+        return self._k
+
+    @k.setter
+    def k(self, value):
+        """
+        This is the setter method
+        """
+        self._k = value
+
+    @property
+    def n(self):
+        """
+        n is a property
+        This is the getter method
+        """
         return self._n
-    n = property(_get_n)
 
     def apply_gate(self, gate):
         """
@@ -51,14 +89,27 @@ class NQubit:
 
         if not isinstance(gate, GateMatrix):
             raise TypeError('The given parameter must be a quantum gate.')
-        elif gate.length != self._n:
-            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self._n) + ' qubits found.')
+        elif gate.length != self.n:
+            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self.n) + ' qubits found.')
         else:
             # Multiply matrices.
-            self._v = self._v.dot(gate.matrix)
+            self.v = self.v.dot(gate.matrix)
 
             # Update normalization factor.
-            self._k += gate.factor
+            self.k += gate.k
+
+    def copy(self):
+        """
+        Returns a full copy of the n-qubit, allowing the original to be modified without
+        altering the copy.
+
+        :return: Copied n-qubit.
+        """
+
+        result = NQubit(self.n)
+        result.v = self.v.copy()
+        result.k = self.k
+        return result
 
     def __repr__(self):
         """
@@ -67,4 +118,43 @@ class NQubit:
         :return: Resulting string.
         """
 
-        return str(self._v) + " * sqrt(2)^(-" + str(self._k) + ")"
+        return str(self.v) + " * sqrt(2)^(" + str(-self.k) + ")"
+
+    def __eq__(self, nqubit):
+        """
+        Determines whether two n-qubits are equal.
+
+        :return: True if both are equal, False otherwise.
+        """
+
+        return nqubit.k == self.k \
+               and nqubit.n == self.n \
+               and np.array_equal(nqubit.v, self.v)
+
+    def __ne__(self, nqubit):
+        """
+        Determines whether two n-qubits are not equal.
+
+        :return: True if the elements differ, True otherwise.
+        """
+
+        return not self == nqubit
+
+    def _check_length(self, length):
+        """
+        Packs all checks concerning the n-qubit's length.
+
+        :param length: Length to be checked
+        :return: True if the length specified is right.
+        """
+
+        result = False
+
+        if type(length) != IntType and type(length) != LongType:
+            raise TypeError('The length must be a whole number.')
+        elif length < 1:
+            raise ValueError('The length can not be equal to or lower than 0.')
+        else:
+            result = True
+
+        return result
