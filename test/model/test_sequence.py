@@ -37,13 +37,13 @@ class TestSequence(TestCase):
         self.assertEquals(str(self.sequence3b), "['1', '1', 'G']")
 
     def test__get_n(self):
-        self.assertEquals(self.sequence1.n, 1)
-        self.assertEquals(self.sequence2a.n, 2)
-        self.assertEquals(self.sequence2b.n, 2)
-        self.assertEquals(self.sequence2c.n, 2)
-        self.assertEquals(self.sequence2d.n, 2)
-        self.assertEquals(self.sequence3a.n, 3)
-        self.assertEquals(self.sequence3b.n, 3)
+        self.assertEquals(self.sequence1.length, 1)
+        self.assertEquals(self.sequence2a.length, 2)
+        self.assertEquals(self.sequence2b.length, 2)
+        self.assertEquals(self.sequence2c.length, 2)
+        self.assertEquals(self.sequence2d.length, 2)
+        self.assertEquals(self.sequence3a.length, 3)
+        self.assertEquals(self.sequence3b.length, 3)
 
     def test_get_decimal_states(self):
         self.assertEquals(self.sequence1.get_decimal_states(), (0,1))

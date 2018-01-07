@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-from math import sqrt
-
 import numpy as np
-
 from app.model.gatematrix import GateMatrix
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
@@ -26,10 +23,10 @@ class Gates:
             raise TypeError('The first parameter must be a NQubit instance.')
         if not isinstance(sequence, Sequence):
             raise TypeError('The second parameter must be a Sequence instance.')
-        elif sequence.n != nqubit.n:
+        elif sequence.length != nqubit.length:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
-            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.n)), dtype=np.complex))
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
             base_matrix = np.matrix([[1,  1],
                                      [1, -1]], dtype=np.complex_)
             targets = sequence.get_decimal_states()
@@ -38,7 +35,7 @@ class Gates:
                 for j in range(2):
                     gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
 
-            gate = GateMatrix(1, gate_matrix)
+            gate = GateMatrix(gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -53,10 +50,10 @@ class Gates:
             raise TypeError('The first parameter must be a NQubit instance.')
         if not isinstance(sequence, Sequence):
             raise TypeError('The second parameter must be a Sequence instance.')
-        elif sequence.n != nqubit.n:
+        elif sequence.length != nqubit.length:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
-            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.n)), dtype=np.complex))
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
             base_matrix = np.matrix([[1,  0],
                                      [0, 1j]], dtype=np.complex_)
             targets = sequence.get_decimal_states()
@@ -65,7 +62,7 @@ class Gates:
                 for j in range(2):
                     gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
 
-            gate = GateMatrix(0, gate_matrix)
+            gate = GateMatrix(gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -79,8 +76,8 @@ class Gates:
 
         if not isinstance(nqubit, NQubit):
             raise TypeError('The first parameter must be a NQubit instance.')
-        elif nqubit.n != 3:
-            raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.n) + ' qubits found.')
+        elif nqubit.length != 3:
+            raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.length) + ' qubits found.')
         else:
             seq = Sequence('1', '1', 'G')
             # Apply the V gate to the |1>*|1>*|1>=|7> state
@@ -101,7 +98,7 @@ class Gates:
             raise TypeError('The first parameter must be a NQubit instance.')
         if not isinstance(sequence, Sequence):
             raise TypeError('The second parameter must be a Sequence instance.')
-        elif sequence.n != nqubit.n:
+        elif sequence.length != nqubit.length:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             # Apply C^k(Z) as (C^k(V))^2
@@ -123,7 +120,7 @@ class Gates:
             raise TypeError('The first parameter must be a NQubit instance.')
         if not isinstance(sequence, Sequence):
             raise TypeError('The second parameter must be a Sequence instance.')
-        elif sequence.n != nqubit.n:
+        elif sequence.length != nqubit.length:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             # Apply X as HZH
@@ -144,8 +141,8 @@ class Gates:
 
         if not isinstance(nqubit, NQubit):
             raise TypeError('The first parameter must be a NQubit instance.')
-        elif nqubit.n != 1:
-            raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.n) + ' qubits found.')
+        elif nqubit.length != 1:
+            raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.length) + ' qubits found.')
         else:
             seq = Sequence('1', '1', 'G')
             # Apply X as HZH

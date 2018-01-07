@@ -24,61 +24,60 @@ class NQubit:
             raise ValueError('The state must be within 0 and 2^length-1')
         else:
             # Number of qubits in the sequence.
-            self.n = length
+            self._length = length
 
             # Vector of n qubits, as Gaussian whole numbers.
-            self.v = np.matrix(np.zeros(int(pow(2, self.n)), dtype=np.complex_))
+            self.vector = np.matrix(np.zeros(int(pow(2, self.length)), dtype=np.complex_))
 
             # Normalization factor: [sqrt(2)]^(-k). Starts as sqrt(2)^(-0) = 1
-            self.k = 0
+            self.factor = 0
 
-            for i in range(1, self.n):
-                self.v[0,i] = 0.0 + 0.0j # Initialize each position of the array.
+            for i in range(1, self.length):
+                self.vector[0,i] = 0.0 + 0.0j # Initialize each position of the array.
 
-            self.v[0,state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
+            self.vector[0,state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
 
     @property
-    def v(self):
+    def vector(self):
         """
         v is a property
         This is the getter method
         """
-        return self._v
+        return self._vector
 
-    @v.setter
-    def v(self, vector):
+    @vector.setter
+    def vector(self, vector):
         """
         This is the setter method
         """
         if not isinstance(vector, np.matrix):
             raise TypeError("The n-qubit vector must be a Numpy 2D matrix.")
         else:
-            self._v = vector
-            self._n = log(vector.size, 2)
-            print self.n
+            self._vector = vector
+            self._length = log(vector.size, 2)
 
     @property
-    def k(self):
+    def factor(self):
         """
         k is a property
         This is the getter method
         """
-        return self._k
+        return self._factor
 
-    @k.setter
-    def k(self, value):
+    @factor.setter
+    def factor(self, value):
         """
         This is the setter method
         """
-        self._k = value
+        self._factor = value
 
     @property
-    def n(self):
+    def length(self):
         """
         n is a property
         This is the getter method
         """
-        return self._n
+        return self._length
 
     def apply_gate(self, gate):
         """
@@ -89,14 +88,18 @@ class NQubit:
 
         if not isinstance(gate, GateMatrix):
             raise TypeError('The given parameter must be a quantum gate.')
-        elif gate.length != self.n:
-            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self.n) + ' qubits found.')
+        elif gate.length != self.length:
+            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self.length) + ' qubits found.')
         else:
             # Multiply matrices.
-            self.v = self.v.dot(gate.matrix)
+            self.vector = self.vector.dot(gate.matrix)
 
             # Update normalization factor.
-            self.k += gate.k
+            sum_squares = 0
+            for i in range(int(pow(2, self.length))):
+                sum_squares += self.vector[0,i].real**2
+                sum_squares += self.vector[0,i].imag**2
+            self.factor = log(sum_squares, 2)
 
     def copy(self):
         """
@@ -106,9 +109,9 @@ class NQubit:
         :return: Copied n-qubit.
         """
 
-        result = NQubit(self.n)
-        result.v = self.v.copy()
-        result.k = self.k
+        result = NQubit(self.length)
+        result.vector = self.vector.copy()
+        result.factor = self.factor
         return result
 
     def __repr__(self):
@@ -118,7 +121,7 @@ class NQubit:
         :return: Resulting string.
         """
 
-        return str(self.v) + " * sqrt(2)^(" + str(-self.k) + ")"
+        return str(self.vector) + " * sqrt(2)^(" + str(-self.factor) + ")"
 
     def __eq__(self, nqubit):
         """
@@ -127,9 +130,9 @@ class NQubit:
         :return: True if both are equal, False otherwise.
         """
 
-        return nqubit.k == self.k \
-               and nqubit.n == self.n \
-               and np.array_equal(nqubit.v, self.v)
+        return nqubit.factor == self.factor \
+               and nqubit.length == self.length \
+               and np.array_equal(nqubit.vector, self.vector)
 
     def __ne__(self, nqubit):
         """
@@ -158,3 +161,4 @@ class NQubit:
             result = True
 
         return result
+        

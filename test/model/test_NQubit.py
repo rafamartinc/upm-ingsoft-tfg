@@ -46,63 +46,63 @@ class TestNQubit(TestCase):
         self.failUnlessRaises(ValueError,  NQubit, 3, -1)
         self.failUnlessRaises(ValueError,  NQubit, 3, 8)
 
-    def test_v(self):
-        self.assertTrue(np.array_equal(self.n1_0.v, np.matrix([[1.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n1_1.v, np.matrix([[0.+0.j, 1.+0.j]])))
-        self.assertTrue(np.array_equal(self.n2_0.v, np.matrix([[1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n2_1.v, np.matrix([[0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n2_2.v, np.matrix([[0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n2_3.v, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j]])))
-        self.assertTrue(np.array_equal(self.n3_0.v, np.matrix([[1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n3_1.v, np.matrix([[0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n3_2.v, np.matrix([[0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n3_3.v, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n3_4.v, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n3_5.v, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n3_6.v, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j]])))
-        self.assertTrue(np.array_equal(self.n3_7.v, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j]])))
+    def test_vector(self):
+        self.assertTrue(np.array_equal(self.n1_0.vector, np.matrix([[1.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n1_1.vector, np.matrix([[0.+0.j, 1.+0.j]])))
+        self.assertTrue(np.array_equal(self.n2_0.vector, np.matrix([[1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n2_1.vector, np.matrix([[0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n2_2.vector, np.matrix([[0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n2_3.vector, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j]])))
+        self.assertTrue(np.array_equal(self.n3_0.vector, np.matrix([[1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n3_1.vector, np.matrix([[0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n3_2.vector, np.matrix([[0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n3_3.vector, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n3_4.vector, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n3_5.vector, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n3_6.vector, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j, 0.+0.j]])))
+        self.assertTrue(np.array_equal(self.n3_7.vector, np.matrix([[0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 1.+0.j]])))
 
-    def test_k(self):
-        self.assertEquals(self.n1_0.k, 0)
-        self.assertEquals(self.n1_1.k, 0)
-        self.assertEquals(self.n2_0.k, 0)
-        self.assertEquals(self.n2_1.k, 0)
-        self.assertEquals(self.n2_2.k, 0)
-        self.assertEquals(self.n2_3.k, 0)
-        self.assertEquals(self.n3_0.k, 0)
-        self.assertEquals(self.n3_1.k, 0)
-        self.assertEquals(self.n3_2.k, 0)
-        self.assertEquals(self.n3_3.k, 0)
-        self.assertEquals(self.n3_4.k, 0)
-        self.assertEquals(self.n3_5.k, 0)
-        self.assertEquals(self.n3_6.k, 0)
-        self.assertEquals(self.n3_7.k, 0)
+    def test_factor(self):
+        self.assertEquals(self.n1_0.factor, 0)
+        self.assertEquals(self.n1_1.factor, 0)
+        self.assertEquals(self.n2_0.factor, 0)
+        self.assertEquals(self.n2_1.factor, 0)
+        self.assertEquals(self.n2_2.factor, 0)
+        self.assertEquals(self.n2_3.factor, 0)
+        self.assertEquals(self.n3_0.factor, 0)
+        self.assertEquals(self.n3_1.factor, 0)
+        self.assertEquals(self.n3_2.factor, 0)
+        self.assertEquals(self.n3_3.factor, 0)
+        self.assertEquals(self.n3_4.factor, 0)
+        self.assertEquals(self.n3_5.factor, 0)
+        self.assertEquals(self.n3_6.factor, 0)
+        self.assertEquals(self.n3_7.factor, 0)
 
-    def test_n(self):
-        self.assertEquals(self.n1_0.n, 1)
-        self.assertEquals(self.n1_1.n, 1)
-        self.assertEquals(self.n2_0.n, 2)
-        self.assertEquals(self.n2_1.n, 2)
-        self.assertEquals(self.n2_2.n, 2)
-        self.assertEquals(self.n2_3.n, 2)
-        self.assertEquals(self.n3_0.n, 3)
-        self.assertEquals(self.n3_1.n, 3)
-        self.assertEquals(self.n3_2.n, 3)
-        self.assertEquals(self.n3_3.n, 3)
-        self.assertEquals(self.n3_4.n, 3)
-        self.assertEquals(self.n3_5.n, 3)
-        self.assertEquals(self.n3_6.n, 3)
-        self.assertEquals(self.n3_7.n, 3)
+    def test_length(self):
+        self.assertEquals(self.n1_0.length, 1)
+        self.assertEquals(self.n1_1.length, 1)
+        self.assertEquals(self.n2_0.length, 2)
+        self.assertEquals(self.n2_1.length, 2)
+        self.assertEquals(self.n2_2.length, 2)
+        self.assertEquals(self.n2_3.length, 2)
+        self.assertEquals(self.n3_0.length, 3)
+        self.assertEquals(self.n3_1.length, 3)
+        self.assertEquals(self.n3_2.length, 3)
+        self.assertEquals(self.n3_3.length, 3)
+        self.assertEquals(self.n3_4.length, 3)
+        self.assertEquals(self.n3_5.length, 3)
+        self.assertEquals(self.n3_6.length, 3)
+        self.assertEquals(self.n3_7.length, 3)
 
     def test_apply_gate(self):
-        gate2x2_i = GateMatrix(0, np.matrix([[1, 0],
-                                             [0, 1]], dtype=np.complex))
-        gate2x2_h = GateMatrix(1, np.matrix([[1,  1],
-                                             [1, -1]], dtype=np.complex))
-        gate4x4 = GateMatrix(-3, np.matrix([[-1. + 1.j,  0. + 0.j, -10. - 1.j, 0. + 0.j],
-                                            [-5. + 0.j, -1. + 1.j,   3. - 2.j, 1. + 1.j],
-                                            [-5. + 0.j,  0. + 1.j,   2. - 0.j, 2. - 1.j],
-                                            [ 2. + 2.j,  2. - 1.j,   4. + 3.j, 0. + 3.j]
+        gate2x2_i = GateMatrix(np.matrix([[1, 0],
+                                          [0, 1]], dtype=np.complex))
+        gate2x2_h = GateMatrix(np.matrix([[1,  1],
+                                          [1, -1]], dtype=np.complex))
+        gate4x4 = GateMatrix(np.matrix([[-1. + 1.j,  0. + 1.j, -10. - 1.j, 1. + 0.j],
+                                        [-5. + 0.j, -2. + 0.j,   5. - 3.j, 0. + 1.j],
+                                        [-5. + 1.j,  0. + 1.j,   2. - 0.j, 2. - 1.j],
+                                        [ 2. + 3.j,  1. - 1.j,   4. + 2.j, 0. + 4.j]
                                                                 ], dtype=np.complex))
 
         # Check identity matrix with 1 qubit as |0>
@@ -119,25 +119,25 @@ class TestNQubit(TestCase):
         n_copy = self.n1_0.copy()
         n_copy.apply_gate(gate2x2_h)
         hadamard1_0 = NQubit(1)
-        hadamard1_0.v = np.matrix([[1.+0.j,  1.+0.j]], dtype=np.complex)
-        hadamard1_0.k = 1
+        hadamard1_0.vector = np.matrix([[1.+0.j,  1.+0.j]], dtype=np.complex)
+        hadamard1_0.factor = 1
         self.assertEquals(n_copy, hadamard1_0)
 
         # Check Hadamard matrix with 1 qubit as |1>
         n_copy = self.n1_1.copy()
         n_copy.apply_gate(gate2x2_h)
         hadamard1_1 = NQubit(1)
-        hadamard1_1.v = np.matrix([[1.+0.j,  -1.+0.j]], dtype=np.complex)
-        hadamard1_1.k = 1
+        hadamard1_1.vector = np.matrix([[1.+0.j,  -1.+0.j]], dtype=np.complex)
+        hadamard1_1.factor = 1
         self.assertEquals(n_copy, hadamard1_1)
 
         # Check superior matrix: 2 qubits, 4x4 matrix.
         n_copy = self.n2_3.copy()
-        n_copy.v = np.matrix([[1.+0.j,  1.+0.j,  1.+0.j,  1.+0.j]], dtype=np.complex)
+        n_copy.vector = np.matrix([[0.+0.j,  1.+0.j,  0.+0.j,  0.+0.j]], dtype=np.complex)
         n_copy.apply_gate(gate4x4)
         target = NQubit(2)
-        target.v = np.matrix([[-9.+3.j,  1.+1.j,  -1.+0.j,  3.+3.j]], dtype=np.complex)
-        target.k = -3
+        target.vector = np.matrix([[-5.+0.j, -2.+0.j,  5.-3.j,  0.+1.j]], dtype=np.complex)
+        target.factor = 6
         self.assertEquals(n_copy, target)
 
     def test_copy(self):
@@ -145,15 +145,15 @@ class TestNQubit(TestCase):
         self.assertEquals(self.n1_0, n_copy)
 
         n_copy = self.n1_0.copy()
-        n_copy.k = 10
+        n_copy.factor = 10
         self.assertNotEquals(self.n1_0, n_copy)
 
         n_copy = self.n1_0.copy()
-        n_copy.n = 10
+        n_copy.length = 10
         self.assertNotEquals(self.n1_0, n_copy)
 
         n_copy = self.n1_0.copy()
-        gate2x2_hadamard = GateMatrix(1, np.matrix([[1,  1],
+        gate2x2_hadamard = GateMatrix(np.matrix([[1,  1],
                                                     [1, -1]], dtype=np.complex))
         n_copy.apply_gate(gate2x2_hadamard)
         self.assertTrue(self.n1_0 != n_copy)
@@ -175,19 +175,16 @@ class TestNQubit(TestCase):
         self.assertEquals(self.n3_7.__repr__(), "[[ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  1.+0.j]] * sqrt(2)^(0)")
 
     def test___eq__(self):
-        self.assertTrue(self.n1_0 == self.n1_0)
         self.assertFalse(self.n1_0 == self.n1_1)
         self.assertTrue(self.n1_0 == NQubit(1,0))
         self.assertFalse(self.n1_0 == NQubit(1,1))
         self.assertFalse(self.n1_0 == NQubit(2))
 
-        self.assertTrue(self.n1_1 == self.n1_1)
         self.assertFalse(self.n1_1 == self.n1_0)
         self.assertTrue(self.n1_1 == NQubit(1,1))
         self.assertFalse(self.n1_1 == NQubit(1,0))
         self.assertFalse(self.n1_1 == NQubit(2))
 
-        self.assertTrue(self.n2_0 == self.n2_0)
         self.assertFalse(self.n2_0 == self.n2_1)
         self.assertTrue(self.n2_0 == NQubit(2,0))
         self.assertFalse(self.n2_0 == NQubit(2,1))
@@ -196,19 +193,16 @@ class TestNQubit(TestCase):
         self.assertFalse(self.n2_0 == NQubit(1))
 
     def test___ne__(self):
-        self.assertFalse(self.n1_0 != self.n1_0)
         self.assertTrue(self.n1_0 != self.n1_1)
         self.assertFalse(self.n1_0 != NQubit(1,0))
         self.assertTrue(self.n1_0 != NQubit(1,1))
         self.assertTrue(self.n1_0 != NQubit(2))
 
-        self.assertFalse(self.n1_1 != self.n1_1)
         self.assertTrue(self.n1_1 != self.n1_0)
         self.assertFalse(self.n1_1 != NQubit(1,1))
         self.assertTrue(self.n1_1 != NQubit(1,0))
         self.assertTrue(self.n1_1 != NQubit(2))
 
-        self.assertFalse(self.n2_0 != self.n2_0)
         self.assertTrue(self.n2_0 != self.n2_1)
         self.assertFalse(self.n2_0 != NQubit(2,0))
         self.assertTrue(self.n2_0 != NQubit(2,1))

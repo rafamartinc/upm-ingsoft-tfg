@@ -61,9 +61,9 @@ class Sequence:
 
         return str(self._seq)
 
-    def _get_n(self):
+    def _get_length(self):
         return len(self._seq)
-    n = property(_get_n)
+    length = property(_get_length)
 
     def get_decimal_states(self):
         """
