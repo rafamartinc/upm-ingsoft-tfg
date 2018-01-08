@@ -95,17 +95,7 @@ class NQubit:
             self.vector = self.vector.dot(gate.matrix)
 
             # Try to divide all coefficients by two.
-            divide = True
-            while divide:
-                i = 0
-                while i < int(pow(2, self.length)) and divide:
-                    divide = self.vector[0,i].real % 2 == 0
-                    divide = self.vector[0,i].imag % 2 == 0 and divide
-                    i += 1
-
-                if divide:
-                    for i in range(int(pow(2, self.length))):
-                        self.vector[0,i] /= 2
+            self._simplify()
 
             # Update normalization factor.
             sum_squares = 0
@@ -174,4 +164,19 @@ class NQubit:
             result = True
 
         return result
-        
+
+    def _simplify(self):
+        """
+        Tries to divide the whole vector by two, to ensure that H^2=I.
+        """
+        divide = True
+        while divide:
+            i = 0
+            while i < int(pow(2, self.length)) and divide:
+                divide = self.vector[0,i].real % 2 == 0
+                divide = self.vector[0,i].imag % 2 == 0 and divide
+                i += 1
+
+            if divide:
+                for i in range(int(pow(2, self.length))):
+                    self.vector[0,i] /= 2
