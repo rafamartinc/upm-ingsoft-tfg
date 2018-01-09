@@ -126,25 +126,7 @@ class NQubit:
 
         for i in range(pow(2, self.length)):
             number = self.vector[0,i]
-            if number.real == 0:
-                if number.imag == 0:
-                    result += '0'
-                elif number.imag == 1:
-                    result += 'i'
-                elif number.imag == -1:
-                    result += '-i'
-                else:
-                    result += str(int(number.imag)) + 'i'
-            else:
-                result += str(int(number.real))
-                if number.imag == 1:
-                    result += '+i'
-                elif number.imag > 0:
-                    result += '+' + str(int(number.imag)) + 'i'
-                elif number.imag == -1:
-                    result += '-i'
-                elif number.imag < 0:
-                    result += str(int(number.imag)) + 'i'
+            result += self._complex_to_string(number)
 
             if i != pow(2, self.length) - 1:
                 result += ', '
@@ -207,3 +189,34 @@ class NQubit:
             if divide:
                 for i in range(int(pow(2, self.length))):
                     self.vector[0,i] /= 2
+
+    def _complex_to_string(self, number):
+        """
+        Converts a complex number to a Gaussian integer formatted as a string.
+
+        :param complex: Complex number.
+        :return: String format.
+        """
+        result = ''
+
+        if number.real == 0:
+            if number.imag == 0:
+                result += '0'
+            elif number.imag == 1:
+                result += 'i'
+            elif number.imag == -1:
+                result += '-i'
+            else:
+                result += str(int(number.imag)) + 'i'
+        else:
+            result += str(int(number.real))
+            if number.imag == 1:
+                result += '+i'
+            elif number.imag > 0:
+                result += '+' + str(int(number.imag)) + 'i'
+            elif number.imag == -1:
+                result += '-i'
+            elif number.imag < 0:
+                result += str(int(number.imag)) + 'i'
+
+        return result
