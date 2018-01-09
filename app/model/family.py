@@ -177,16 +177,16 @@ class Family:
                 for gate in self._gates:
                     nqubit = self._list[current_id].nqubit.copy()
 
-                    seq = Sequence('1', '1', 'G')
-                    gate['f'](nqubit, seq)
+                    for seq in Sequence.generate_all(self.length):
+                        gate['f'](nqubit, seq)
 
-                    if self.contains(nqubit) == -1:
-                        new_id = len(self._list)
+                        if self.contains(nqubit) == -1:
+                            new_id = len(self._list)
 
-                        new_node = Member(new_id, nqubit, current_id, gate['tag'], seq, complexity + 1)
-                        self._list.append(new_node)
+                            new_node = Member(new_id, nqubit, current_id, gate['tag'], seq, complexity + 1)
+                            self._list.append(new_node)
 
-                        next_nodes.append(new_id)
+                            next_nodes.append(new_id)
 
             nodes = next_nodes
             complexity += 1

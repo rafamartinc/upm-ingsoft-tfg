@@ -90,3 +90,45 @@ class Sequence:
         int2 = int(int2, 2)
 
         return (int1, int2)
+
+    @staticmethod
+    def generate_all(length):
+        """
+        Generate all the possible ways that a gate can be applied to a n-qubit, considering all
+        possible controls as ones and zeros.
+
+        :param length: Total length of the sequence, having in mind that one position will be
+            the one to apply the gate on.
+        :return: List of sequences.
+        """
+
+        if type(length) != IntType and type(length) != LongType:
+            raise TypeError('The length must be a whole number.')
+        elif length <= 0:
+            raise ValueError('The length must be positive.')
+        else:
+            if length == 1:
+                result = [Sequence('G')]
+            else:
+                result = []
+
+                # Generate all next controls from ['0', ..., '0'] to ['1', ..., '1'].
+                bits = [[]]
+                for i in range(length-1):
+                    new_bits = []
+                    for b in bits:
+                        new_bits.append(b + ['0'])
+                        new_bits.append(b + ['1'])
+                    bits = new_bits
+
+                # Insert 'G' in the sequence.
+                for b in bits:
+                    for i in range(len(b)):
+                        new_seq = [j for j in b]
+                        new_seq.insert(i, 'G')
+                        result.append(Sequence(*new_seq))
+                    new_seq = [j for j in b]
+                    new_seq.append('G')
+                    result.append(Sequence(*new_seq))
+
+        return result
