@@ -122,8 +122,36 @@ class NQubit:
 
         :return: Resulting string.
         """
+        result = '('
 
-        return str(self.vector) + " * sqrt(2)^(" + str(-self.factor) + ")"
+        for i in range(pow(2, self.length)):
+            number = self.vector[0,i]
+            if number.real == 0:
+                if number.imag == 0:
+                    result += '0'
+                elif number.imag == 1:
+                    result += 'i'
+                elif number.imag == -1:
+                    result += '-i'
+                else:
+                    result += str(int(number.imag)) + 'i'
+            else:
+                result += str(int(number.real))
+                if number.imag == 1:
+                    result += '+i'
+                elif number.imag > 0:
+                    result += '+' + str(int(number.imag)) + 'i'
+                elif number.imag == -1:
+                    result += '-i'
+                elif number.imag < 0:
+                    result += str(int(number.imag)) + 'i'
+
+            if i != pow(2, self.length) - 1:
+                result += ', '
+
+        result += ') * sqrt(2)^(' + str(-self.factor) + ')'
+
+        return result
 
     def __eq__(self, nqubit):
         """
