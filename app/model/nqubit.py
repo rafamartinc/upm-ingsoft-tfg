@@ -6,7 +6,6 @@ from gatematrix import GateMatrix
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
-
 class NQubit:
 
     def __init__(self, length, state=0):
@@ -40,7 +39,7 @@ class NQubit:
     @property
     def vector(self):
         """
-        v is a property
+        vector is a property
         This is the getter method
         """
         return self._vector
@@ -59,7 +58,7 @@ class NQubit:
     @property
     def factor(self):
         """
-        k is a property
+        factor is a property
         This is the getter method
         """
         return self._factor
@@ -74,7 +73,7 @@ class NQubit:
     @property
     def length(self):
         """
-        n is a property
+        length is a property
         This is the getter method
         """
         return self._length
