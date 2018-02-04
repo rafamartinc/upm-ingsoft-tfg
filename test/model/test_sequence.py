@@ -108,23 +108,50 @@ class TestSequence(TestCase):
             self.assertTrue(i in result_3b)
         self.assertEquals(len(self.sequence3b.alter_controls()), len(target_3))
 
-    def test_generate_all(self):
-        self.assertEquals(str(Sequence.generate_all(1)), "[['G']]")
+    def test_generate_all_without_gate(self):
 
-        target_2 = ["['0', 'G']", "['1', 'G']", "['G', '0']", "['G', '1']"]
+        target_1 = ["['0']", "['1']"]
 
-        result_2 = Sequence.generate_all(2)
+        result_1 = Sequence.generate_all_without_gate(1)
+        result_1 = [str(i) for i in result_1]
+        for i in target_1:
+            self.assertTrue(i in result_1)
+        self.assertEquals(len(Sequence.generate_all_without_gate(1)), len(target_1))
+
+        target_2 = ["['0', '0']", "['0', '1']", "['1', '0']", "['1', '1']"]
+
+        result_2 = Sequence.generate_all_without_gate(2)
         result_2 = [str(i) for i in result_2]
         for i in target_2:
             self.assertTrue(i in result_2)
-        self.assertEquals(len(Sequence.generate_all(2)), len(target_2))
+        self.assertEquals(len(Sequence.generate_all_without_gate(2)), len(target_2))
+
+        target_3 = ["['0', '0', '0']", "['0', '0', '1']", "['0', '1', '0']", "['0', '1', '1']",
+                    "['1', '0', '0']", "['1', '0', '1']", "['1', '1', '0']", "['1', '1', '1']"]
+
+        result_3 = Sequence.generate_all_without_gate(3)
+        result_3 = [str(i) for i in result_3]
+        for i in target_3:
+            self.assertTrue(i in result_3)
+        self.assertEquals(len(Sequence.generate_all_without_gate(3)), len(target_3))
+
+    def test_generate_all_with_gate(self):
+        self.assertEquals(str(Sequence.generate_all_with_gate(1)), "[['G']]")
+
+        target_2 = ["['0', 'G']", "['1', 'G']", "['G', '0']", "['G', '1']"]
+
+        result_2 = Sequence.generate_all_with_gate(2)
+        result_2 = [str(i) for i in result_2]
+        for i in target_2:
+            self.assertTrue(i in result_2)
+        self.assertEquals(len(Sequence.generate_all_with_gate(2)), len(target_2))
 
         target_3 = ["['0', '0', 'G']", "['0', '1', 'G']", "['1', '0', 'G']", "['1', '1', 'G']",
                     "['0', 'G', '0']", "['0', 'G', '1']", "['1', 'G', '0']", "['1', 'G', '1']",
                     "['G', '0', '0']", "['G', '0', '1']", "['G', '1', '0']", "['G', '1', '1']"]
 
-        result_3 = Sequence.generate_all(3)
+        result_3 = Sequence.generate_all_with_gate(3)
         result_3 = [str(i) for i in result_3]
         for i in target_3:
             self.assertTrue(i in result_3)
-        self.assertEquals(len(Sequence.generate_all(3)), len(target_3))
+        self.assertEquals(len(Sequence.generate_all_with_gate(3)), len(target_3))

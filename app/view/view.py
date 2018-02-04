@@ -8,7 +8,8 @@ class View:
     Establishes communication with the user, through the application's console.
     """
 
-    def display(self, o = ""):
+    @staticmethod
+    def display(o=""):
         """
         Main console output of the app.
 

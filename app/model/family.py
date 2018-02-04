@@ -3,20 +3,21 @@ from types import IntType, LongType, StringType
 from app.controller.gates import Gates
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
+from app.view.view import View
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
 
 class Member:
 
-    def __init__(self, id, nqubit, parent=None, gate=None, sequence=None, complexity=0):
+    def __init__(self, identifier, nqubit, parent=None, gate=None, sequence=None, complexity=0):
         """
         Sets a member of a family of n-qubits, to evaluate complexity and relationships.
 
         :param nqubit: n-qubit that defines the member.
         """
 
-        if type(id) != IntType and type(id) != LongType:
+        if type(identifier) != IntType and type(identifier) != LongType:
             raise TypeError('The first parameter must be a whole number.')
         elif not isinstance(nqubit, NQubit):
             raise TypeError('The second parameter must be a NQubit instance.')
@@ -29,7 +30,7 @@ class Member:
         elif type(complexity) != IntType and type(complexity) != LongType:
             raise TypeError('The sixth parameter must be a whole number.')
         else:
-            self._id = id
+            self._identifier = identifier
             self._nqubit = nqubit
 
             self._parent = parent
@@ -38,12 +39,12 @@ class Member:
             self._complexity = complexity
 
     @property
-    def id(self):
+    def identifier(self):
         """
         id is a property
         This is the getter method
         """
-        return self._id
+        return self._identifier
 
     @property
     def nqubit(self):
@@ -91,7 +92,7 @@ class Member:
 
         :return: Resulting string.
         """
-        result = str(self.id) + ' : ' + str(self.nqubit)
+        result = str(self.identifier) + ' : ' + str(self.nqubit)
 
         if self.parent is None:
             result += ' - Base node'
@@ -126,7 +127,7 @@ class Family:
                 new_node = Member(len(self._list), NQubit(self.length, i))
                 self._list.append(new_node)
 
-            self._gates = [
+            self._allowed_gates = [
                 {'f' : Gates.gate_h, 'tag': 'H'},
                 {'f' : Gates.gate_v, 'tag': 'V'},
                 {'f' : Gates.gate_x, 'tag': 'X'},
@@ -161,33 +162,43 @@ class Family:
 
         return result
 
-    def generate(self, max_complexity):
+    def _generate_from_parent(self, parent_id, parent_complexity, next_nodes):
+        """
+        Generates all children from a given parent nqubit.
+
+        :param parent_id: Id from the parent node.
+        :param parent_complexity: Complexity of the parent node.
+        :param next_nodes: List of nodes for next level of complexity.
         """
 
+        for seq in Sequence.generate_all_with_gate(self.length):
+            for gate in self._allowed_gates:
+                nqubit = self._list[parent_id].nqubit.copy()
+                gate['f'](nqubit, seq)
+
+                if self.contains(nqubit) == -1:
+                    new_id = len(self._list)
+
+                    new_node = Member(new_id, nqubit, parent_id, gate['tag'], seq, parent_complexity + 1)
+                    self._list.append(new_node)
+                    View.display(' - ' + str(new_node))
+
+                    next_nodes.append(new_id)
+
+    def generate(self, max_complexity):
+        """
+        Generates all possible n-qubits starting from the base ones, and with all allowed gates.
         """
         nodes = [i for i in range(pow(2, self.length))]
 
         complexity = 0
         while complexity < max_complexity and len(nodes) > 0:
-            print 'COMPLEXITY ' + str(complexity+1)
+            View.display('COMPLEXITY ' + str(complexity+1))
             next_nodes = []
 
             while len(nodes) > 0:
                 current_id = nodes.pop(0)
-
-                for seq in Sequence.generate_all(self.length):
-                    for gate in self._gates:
-                        nqubit = self._list[current_id].nqubit.copy()
-                        gate['f'](nqubit, seq)
-
-                        if self.contains(nqubit) == -1:
-                            new_id = len(self._list)
-
-                            new_node = Member(new_id, nqubit, current_id, gate['tag'], seq, complexity + 1)
-                            self._list.append(new_node)
-                            print new_node
-
-                            next_nodes.append(new_id)
+                self._generate_from_parent(current_id, complexity, next_nodes)
 
             nodes = next_nodes
             complexity += 1
