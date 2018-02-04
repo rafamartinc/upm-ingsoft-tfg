@@ -169,15 +169,15 @@ class Family:
 
         complexity = 0
         while complexity < max_complexity and len(nodes) > 0:
+            print 'COMPLEXITY ' + str(complexity+1)
             next_nodes = []
 
             while len(nodes) > 0:
                 current_id = nodes.pop(0)
 
-                for gate in self._gates:
-                    nqubit = self._list[current_id].nqubit.copy()
-
-                    for seq in Sequence.generate_all(self.length):
+                for seq in Sequence.generate_all(self.length):
+                    for gate in self._gates:
+                        nqubit = self._list[current_id].nqubit.copy()
                         gate['f'](nqubit, seq)
 
                         if self.contains(nqubit) == -1:
@@ -185,6 +185,7 @@ class Family:
 
                             new_node = Member(new_id, nqubit, current_id, gate['tag'], seq, complexity + 1)
                             self._list.append(new_node)
+                            print new_node
 
                             next_nodes.append(new_id)
 

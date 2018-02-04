@@ -13,6 +13,9 @@ class Gates:
     def gate_h(nqubit, sequence):
         """
         Implements the Hadamard Quantum Gate.
+        This gate must be applied without controls, so the sequence will only be taken into
+        consideration to locate the affected qubit, ignoring the state of the other qubits.
+        Otherwise, resulting qubits may escape the model.
 
         Source: https://en.wikipedia.org/wiki/Quantum_gate#Hadamard_gate
 
@@ -29,11 +32,14 @@ class Gates:
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
             base_matrix = np.matrix([[1,  1],
                                      [1, -1]], dtype=np.complex_)
-            targets = sequence.get_decimal_states()
 
-            for i in range(2):
-                for j in range(2):
-                    gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
+            all_sequences = sequence.alter_controls()
+            for s in all_sequences:
+                targets = s.get_decimal_states()
+
+                for i in range(2):
+                    for j in range(2):
+                        gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
 
             gate = GateMatrix(gate_matrix)
             nqubit.apply_gate(gate)

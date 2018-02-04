@@ -65,6 +65,10 @@ class Sequence:
         return len(self._seq)
     length = property(_get_length)
 
+    def _get_array(self):
+        return self._seq
+    array = property(_get_array)
+
     def get_decimal_states(self):
         """
         Given certain control qubits, decides which quantum states are going to be affected by the
@@ -89,7 +93,33 @@ class Sequence:
         int1 = int(int1, 2)
         int2 = int(int2, 2)
 
-        return (int1, int2)
+        return int1, int2
+
+    def alter_controls(self):
+        """
+        Gives all the possible configurations for the sequence, keeping the affected qubit the same.
+        E.g.: INPUT |0>|G>|1>, outputs |0>|G>|0>, |0>|G>|1>, |1>|G>|0>, |1>|G>|1>
+
+        :return: List of all possible sequences, with a fixed qubit as the one affected by the gate.
+        """
+
+        result = []
+        next_sequence = self.array
+
+        for n in range(pow(2, self.length - 1)):
+            result.append(Sequence(*next_sequence))
+
+            i = len(next_sequence) - 1
+            while i >= 0:
+                if next_sequence[i] == '0':
+                    next_sequence[i] = '1'
+                    i = -1
+                else:
+                    if next_sequence[i] == '1':
+                        next_sequence[i] = '0'
+                    i -= 1
+
+        return result
 
     @staticmethod
     def generate_all(length):

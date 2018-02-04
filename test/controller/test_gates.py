@@ -59,19 +59,31 @@ class TestGates(TestCase):
 
         q = NQubit(2, 2)
         Gates.gate_h(q, s1)
-        self.assertEquals(q, NQubit(2, 2))
+        target = NQubit(2)
+        target.vector = np.matrix([[0.+0.j, 0.+0.j,  1.+0.j,  1.+0.j]], dtype=np.complex)
+        target.factor = 1
+        self.assertEquals(q, target)
 
         q = NQubit(2, 3)
         Gates.gate_h(q, s1)
-        self.assertEquals(q, NQubit(2, 3))
+        target = NQubit(2)
+        target.vector = np.matrix([[0.+0.j, 0.+0.j,  1.+0.j,  -1.+0.j]], dtype=np.complex)
+        target.factor = 1
+        self.assertEquals(q, target)
 
         q = NQubit(2, 0)
         Gates.gate_h(q, s2)
-        self.assertEquals(q, NQubit(2, 0))
+        target = NQubit(2)
+        target.vector = np.matrix([[1.+0.j, 1.+0.j,  0.+0.j,  0.+0.j]], dtype=np.complex)
+        target.factor = 1
+        self.assertEquals(q, target)
 
         q = NQubit(2, 1)
         Gates.gate_h(q, s2)
-        self.assertEquals(q, NQubit(2, 1))
+        target = NQubit(2)
+        target.vector = np.matrix([[1.+0.j, -1.+0.j,  0.+0.j,  0.+0.j]], dtype=np.complex)
+        target.factor = 1
+        self.assertEquals(q, target)
 
         q = NQubit(2, 2)
         Gates.gate_h(q, s2)
@@ -109,7 +121,10 @@ class TestGates(TestCase):
 
         q = NQubit(2, 1)
         Gates.gate_h(q, s1)
-        self.assertEquals(q, NQubit(2, 1))
+        target = NQubit(2)
+        target.vector = np.matrix([[0.+0.j, 1.+0.j,  0.+0.j,  1.+0.j]], dtype=np.complex)
+        target.factor = 1
+        self.assertEquals(q, target)
 
         q = NQubit(2, 2)
         Gates.gate_h(q, s1)
@@ -123,11 +138,17 @@ class TestGates(TestCase):
 
         q = NQubit(2, 3)
         Gates.gate_h(q, s1)
-        self.assertEquals(q, NQubit(2, 3))
+        target = NQubit(2)
+        target.vector = np.matrix([[0.+0.j, 1.+0.j,  0.+0.j,  -1.+0.j]], dtype=np.complex)
+        target.factor = 1
+        self.assertEquals(q, target)
 
         q = NQubit(2, 0)
         Gates.gate_h(q, s2)
-        self.assertEquals(q, NQubit(2, 0))
+        target = NQubit(2)
+        target.vector = np.matrix([[1.+0.j, 0.+0.j,  1.+0.j,  0.+0.j]], dtype=np.complex)
+        target.factor = 1
+        self.assertEquals(q, target)
 
         q = NQubit(2, 1)
         Gates.gate_h(q, s2)
@@ -141,7 +162,10 @@ class TestGates(TestCase):
 
         q = NQubit(2, 2)
         Gates.gate_h(q, s2)
-        self.assertEquals(q, NQubit(2, 2))
+        target = NQubit(2)
+        target.vector = np.matrix([[1.+0.j, 0.+0.j,  -1.+0.j,  0.+0.j]], dtype=np.complex)
+        target.factor = 1
+        self.assertEquals(q, target)
 
         q = NQubit(2, 3)
         Gates.gate_h(q, s2)
