@@ -120,11 +120,11 @@ class Family:
             raise ValueError('The second parameter must be positive')
         else:
             self._length = length
-            self._list = []
+            self._list = {}
 
             for i in range(pow(2, self.length)):
                 new_node = Member(len(self._list), NQubit(self.length, i))
-                self._list.append(new_node)
+                self._list[str(new_node.nqubit)] = new_node
 
             self._allowed_gates = [
                 {'f' : Gates.gate_h, 'tag': 'H'},
@@ -151,23 +151,15 @@ class Family:
         :return: Integer of its position if the n-qubit is in the list, -1 otherwise.
         """
 
-        result = -1
+        return self._list.has_key(str(nqubit))
 
-        i = 0
-        while i < len(self._list) and result == -1:
-            if nqubit == self._list[i].nqubit:
-                result = i
-            i += 1
-
-        return result
-
-    def _generate_from_parent(self, parent_id, parent_complexity, next_nodes, file):
+    def _generate_from_parent(self, parent_id, next_nodes, file):
         """
         Generates all children from a given parent nqubit.
 
-        :param parent_id: Id from the parent node.
-        :param parent_complexity: Complexity of the parent node.
+        :param parent_id: Id from the parent node, as its nqubit string representation.
         :param next_nodes: List of nodes for next level of complexity.
+        :param file: Output file.
         """
 
         for seq in Sequence.generate_all_with_gate(self.length):
@@ -175,20 +167,19 @@ class Family:
                 nqubit = self._list[parent_id].nqubit.copy()
                 gate['f'](nqubit, seq)
 
-                if self.contains(nqubit) == -1:
-                    new_id = len(self._list)
-
-                    new_node = Member(new_id, nqubit, parent_id, gate['tag'], seq, parent_complexity + 1)
-                    self._list.append(new_node)
+                if not self.contains(nqubit):
+                    new_node = Member(len(self._list), nqubit, self._list[parent_id].identifier,
+                                      gate['tag'], seq, self._list[parent_id].complexity + 1)
+                    self._list[str(new_node.nqubit)] = new_node
                     file.write(' - ' + str(new_node) + '\n')
 
-                    next_nodes.append(new_id)
+                    next_nodes.append(str(nqubit))
 
     def generate(self, max_complexity):
         """
         Generates all possible n-qubits starting from the base ones, and with all allowed gates.
         """
-        nodes = [i for i in range(pow(2, self.length))]
+        nodes = [i for i in self._list]
         file = open('output.txt', 'w')
 
         complexity = 0
@@ -198,7 +189,7 @@ class Family:
 
             while len(nodes) > 0:
                 current_id = nodes.pop(0)
-                self._generate_from_parent(current_id, complexity, next_nodes, file)
+                self._generate_from_parent(current_id, next_nodes, file)
 
             nodes = next_nodes
             complexity += 1
@@ -215,10 +206,10 @@ class Family:
         complexity = 0
 
         result += 'COMPLEXITY ' + str(complexity) + '\n'
-        for i in self._list:
-            if i.complexity > complexity:
-                complexity = i.complexity
+        for k in self._list.keys():
+            if self._list[k].complexity > complexity:
+                complexity = self._list[k].complexity
                 result += 'COMPLEXITY ' + str(complexity) + '\n'
-            result += '   ' + str(i) + '\n'
+            result += '   ' + str(self._list[k]) + '\n'
 
         return result
