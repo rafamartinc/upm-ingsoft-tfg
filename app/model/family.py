@@ -3,7 +3,6 @@ from types import IntType, LongType, StringType
 from app.controller.gates import Gates
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
-from app.view.view import View
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -162,7 +161,7 @@ class Family:
 
         return result
 
-    def _generate_from_parent(self, parent_id, parent_complexity, next_nodes):
+    def _generate_from_parent(self, parent_id, parent_complexity, next_nodes, file):
         """
         Generates all children from a given parent nqubit.
 
@@ -181,7 +180,7 @@ class Family:
 
                     new_node = Member(new_id, nqubit, parent_id, gate['tag'], seq, parent_complexity + 1)
                     self._list.append(new_node)
-                    View.display(' - ' + str(new_node))
+                    file.write(' - ' + str(new_node) + '\n')
 
                     next_nodes.append(new_id)
 
@@ -190,18 +189,21 @@ class Family:
         Generates all possible n-qubits starting from the base ones, and with all allowed gates.
         """
         nodes = [i for i in range(pow(2, self.length))]
+        file = open('output.txt', 'w')
 
         complexity = 0
         while complexity < max_complexity and len(nodes) > 0:
-            View.display('COMPLEXITY ' + str(complexity+1))
+            file.write('COMPLEXITY ' + str(complexity+1) + '\n')
             next_nodes = []
 
             while len(nodes) > 0:
                 current_id = nodes.pop(0)
-                self._generate_from_parent(current_id, complexity, next_nodes)
+                self._generate_from_parent(current_id, complexity, next_nodes, file)
 
             nodes = next_nodes
             complexity += 1
+
+        file.close()
 
     def __repr__(self):
         """
