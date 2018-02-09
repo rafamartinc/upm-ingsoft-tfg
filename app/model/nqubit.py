@@ -101,7 +101,7 @@ class NQubit:
             for i in range(int(pow(2, self.length))):
                 sum_squares += self.vector[0,i].real**2
                 sum_squares += self.vector[0,i].imag**2
-            self.factor = log(sum_squares, 2)
+            self.factor = int(log(sum_squares, 2))
 
     def copy(self):
         """
