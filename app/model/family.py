@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
 from types import IntType, LongType, StringType
 from app.controller.gates import Gates
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
+from app.view.view import View
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -85,6 +87,20 @@ class Member:
         """
         return self._complexity
 
+    def to_file(self):
+        """
+        Converts the node to a string format to be exported to file.
+
+        :return: Resulting string.
+        """
+
+        result = str(self.identifier) + ';' + self.nqubit.to_file()
+
+        if self.parent is not None:
+            result += ';' + str(self.parent) + ';' + self.gate + ';' + str(self.sequence)
+
+        return result
+
     def __repr__(self):
         """
         Converts the node to a string format to be printed.
@@ -105,9 +121,10 @@ class Family:
 
     def __init__(self, length, max_complexity):
         """
-        Sets a list (family) of n-qubits, given a certain length n.
+        Sets a list (family) of n-qubits, given a certain length.
 
-        :param nqubit: n-qubit that defines the node.
+        :param length: Length (n) of the n-qubit.
+        :param max_complexity: Max complexity to reach in the family.
         """
 
         if type(length) != IntType and type(length) != LongType:
@@ -127,13 +144,13 @@ class Family:
                 self._list[str(new_node.nqubit)] = new_node
 
             self._allowed_gates = [
-                {'f' : Gates.gate_h, 'tag': 'H'},
-                {'f' : Gates.gate_v, 'tag': 'V'},
-                {'f' : Gates.gate_x, 'tag': 'X'},
-                {'f' : Gates.gate_z, 'tag': 'Z'}
+                {'f': Gates.gate_v, 'tag': 'V'},
+                {'f': Gates.gate_x, 'tag': 'X'},
+                {'f': Gates.gate_z, 'tag': 'Z'},
+                {'f': Gates.gate_h, 'tag': 'H'}
             ]
 
-            self.generate(max_complexity)
+            self._generate(max_complexity)
 
     @property
     def length(self):
@@ -143,7 +160,7 @@ class Family:
         """
         return self._length
 
-    def contains(self, nqubit):
+    def _contains(self, nqubit):
         """
         Determines whether a n-qubit is contained in the list.
 
@@ -153,13 +170,13 @@ class Family:
 
         return self._list.has_key(str(nqubit))
 
-    def _generate_from_parent(self, parent_id, next_nodes, file):
+    def _generate_from_parent(self, parent_id, next_nodes, complexity):
         """
         Generates all children from a given parent nqubit.
 
         :param parent_id: Id from the parent node, as its nqubit string representation.
         :param next_nodes: List of nodes for next level of complexity.
-        :param file: Output file.
+        :param complexity: Current complexity.
         """
 
         for seq in Sequence.generate_all_with_gate(self.length):
@@ -167,34 +184,89 @@ class Family:
                 nqubit = self._list[parent_id].nqubit.copy()
                 gate['f'](nqubit, seq)
 
-                if not self.contains(nqubit):
+                if not self._contains(nqubit):
                     new_node = Member(len(self._list), nqubit, self._list[parent_id].identifier,
                                       gate['tag'], seq, self._list[parent_id].complexity + 1)
                     self._list[str(new_node.nqubit)] = new_node
-                    file.write(' - ' + str(new_node) + '\n')
+
+                    # Export to file
+                    file_name = 'Q_n' + str(self.length) + '_c' + str(complexity + 1) + '.csv'
+                    if os.path.isfile(file_name):
+                        output = open(file_name, 'a')
+                    else:
+                        output = open(file_name, 'w')
+                    output.write(' - ' + new_node.to_file() + '\n')
+                    output.close()
 
                     next_nodes.append(str(nqubit))
 
-    def generate(self, max_complexity):
+    def _generate(self, max_complexity):
         """
         Generates all possible n-qubits starting from the base ones, and with all allowed gates.
         """
         nodes = [i for i in self._list]
-        file = open('output.txt', 'w')
 
         complexity = 0
+
+        if complexity < max_complexity:
+            file_name = 'Q_n' + str(self.length) + '_c0.csv'
+            output = open(file_name, 'w')
+            for i in self._list:
+                output.write(' - ' + self._list[i].to_file() + '\n')
+            output.close()
+
         while complexity < max_complexity and len(nodes) > 0:
-            file.write('COMPLEXITY ' + str(complexity+1) + '\n')
+
             next_nodes = []
+
+            try:
+                os.remove('Q_n' + str(self.length) + '_c' + str(complexity + 1) + '.csv')
+            except OSError:
+                pass
 
             while len(nodes) > 0:
                 current_id = nodes.pop(0)
-                self._generate_from_parent(current_id, next_nodes, file)
+                self._generate_from_parent(current_id, next_nodes, complexity)
 
             nodes = next_nodes
             complexity += 1
 
-        file.close()
+    def count_family_members(self):
+        """
+        Counts all family members after calculating them, and prints the result.
+        """
+
+        count = {}
+        complexity = 0
+        file_name = 'Q_n' + str(self.length) + '_c' + str(complexity) + '.csv'
+
+        while os.path.isfile(file_name):
+
+            file_in = open(file_name, "r")
+            count[complexity] = {}
+
+            line = file_in.readline()
+            while line is not '':
+                line = line.split(';')
+
+                if len(line) >= 3:
+                    k = int(line[2])
+                    if k in count[complexity].keys():
+                        count[complexity][k] += 1
+                    else:
+                        count[complexity][k] = 1
+
+                line = file_in.readline()
+
+            file_in.close()
+
+            complexity += 1
+            file_name = 'Q_n' + str(self.length) + '_c' + str(complexity) + '.csv'
+
+        for c in count.keys():
+            View.display("COMPLEXITY " + str(c))
+            for k in count[c].keys():
+                View.display("     Level " + str(k) + ": " + str(count[c][k]))
 
     def __repr__(self):
         """

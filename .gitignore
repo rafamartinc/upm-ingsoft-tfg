@@ -7,3 +7,4 @@
 sonar.bat
 .scannerwork
 *.pyc
+app/controller/Q_n*

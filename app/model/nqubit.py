@@ -116,6 +116,25 @@ class NQubit:
         result.factor = self.factor
         return result
 
+    def to_file(self):
+        """
+        Converts the n-qubit to a string format to be exported to file.
+
+        :return: Resulting string.
+        """
+        result = '('
+
+        for i in range(pow(2, self.length)):
+            number = self.vector[0, i]
+            result += self._complex_to_string(number)
+
+            if i != pow(2, self.length) - 1:
+                result += ','
+
+        result += ');' + str(self.factor)
+
+        return result
+
     def __repr__(self):
         """
         Converts the n-qubit to a string format to be printed.
