@@ -170,35 +170,50 @@ class Family:
 
         return self._list.has_key(str(nqubit))
 
-    def _generate_from_parent(self, parent_id, next_nodes, complexity):
+    def _filename(self, complexity):
+        """
+        Generates the name of the file to which the results are to be exported.
+
+        :param length: Number of qubits.
+        :param complexity: Current complexity.
+        """
+
+        return 'data/Q_n' + str(self.length) + '_c' + str(complexity) + '.csv'
+
+    def _generate_from_parent(self, parent_id, gate, next_nodes, complexity):
         """
         Generates all children from a given parent nqubit.
 
         :param parent_id: Id from the parent node, as its nqubit string representation.
+        :param gate: Gate to be applied to the parent node.
         :param next_nodes: List of nodes for next level of complexity.
         :param complexity: Current complexity.
         """
 
         for seq in Sequence.generate_all_with_gate(self.length):
-            for gate in self._allowed_gates:
-                nqubit = self._list[parent_id].nqubit.copy()
-                gate['f'](nqubit, seq)
+            nqubit = self._list[parent_id].nqubit.copy()
+            gate['f'](nqubit, seq)
 
-                if not self._contains(nqubit):
-                    new_node = Member(len(self._list), nqubit, self._list[parent_id].identifier,
-                                      gate['tag'], seq, self._list[parent_id].complexity + 1)
-                    self._list[str(new_node.nqubit)] = new_node
+            if not self._contains(nqubit):
 
-                    # Export to file
-                    file_name = 'Q_n' + str(self.length) + '_c' + str(complexity + 1) + '.csv'
-                    if os.path.isfile(file_name):
-                        output = open(file_name, 'a')
-                    else:
-                        output = open(file_name, 'w')
-                    output.write(' - ' + new_node.to_file() + '\n')
-                    output.close()
+                new_node = Member(len(self._list), nqubit, self._list[parent_id].identifier,
+                                  gate['tag'], seq, self._list[parent_id].complexity + 1)
+                self._list[str(new_node.nqubit)] = new_node
 
-                    next_nodes.append(str(nqubit))
+                # Export to file
+                file_name = self._filename(complexity + 1)
+                if os.path.isfile(file_name):
+                    output = open(file_name, 'a')
+                else:
+                    output = open(file_name, 'w')
+                output.write(new_node.to_file() + ';')
+
+                output.write(str(nqubit.factor - self._list[parent_id].nqubit.factor))
+
+                output.write('\n')
+                output.close()
+
+                next_nodes.append(str(nqubit))
 
     def _generate(self, max_complexity):
         """
@@ -209,7 +224,7 @@ class Family:
         complexity = 0
 
         if complexity < max_complexity:
-            file_name = 'Q_n' + str(self.length) + '_c0.csv'
+            file_name = self._filename(0)
             output = open(file_name, 'w')
             for i in self._list:
                 output.write(' - ' + self._list[i].to_file() + '\n')
@@ -220,13 +235,21 @@ class Family:
             next_nodes = []
 
             try:
-                os.remove('Q_n' + str(self.length) + '_c' + str(complexity + 1) + '.csv')
+                os.remove(self._filename(complexity + 1))
             except OSError:
                 pass
 
-            while len(nodes) > 0:
-                current_id = nodes.pop(0)
-                self._generate_from_parent(current_id, next_nodes, complexity)
+            file_name = self._filename(complexity + 1)
+            if os.path.isfile(file_name):
+                output = open(file_name, 'a')
+            else:
+                output = open(file_name, 'w')
+            output.write('id;nqubit;k;parent_id;gate;sequence;delta(k)\n')
+            output.close()
+
+            for g in self._allowed_gates:
+                for n in nodes:
+                    self._generate_from_parent(n, g, next_nodes, complexity)
 
             nodes = next_nodes
             complexity += 1
@@ -238,13 +261,14 @@ class Family:
 
         count = {}
         complexity = 0
-        file_name = 'Q_n' + str(self.length) + '_c' + str(complexity) + '.csv'
+        file_name = self._filename(complexity)
 
         while os.path.isfile(file_name):
 
             file_in = open(file_name, "r")
             count[complexity] = {}
 
+            line = file_in.readline()  # Ignore headers.
             line = file_in.readline()
             while line is not '':
                 line = line.split(';')
@@ -261,7 +285,7 @@ class Family:
             file_in.close()
 
             complexity += 1
-            file_name = 'Q_n' + str(self.length) + '_c' + str(complexity) + '.csv'
+            file_name = self._filename(complexity)
 
         for c in count.keys():
             View.display("COMPLEXITY " + str(c))
