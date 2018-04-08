@@ -107,9 +107,18 @@ class Gates:
         elif sequence.length != nqubit.length:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
-            # Apply C^k(Z) as (C^k(V))^2
-            Gates.gate_v(nqubit, sequence)
-            Gates.gate_v(nqubit, sequence)
+            # C^k(Z) equals (C^k(V))^2.
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
+            base_matrix = np.matrix([[1,  0],
+                                     [0, -1]], dtype=np.complex_)
+            targets = sequence.get_decimal_states()
+
+            for i in range(2):
+                for j in range(2):
+                    gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
+
+            gate = GateMatrix(gate_matrix)
+            nqubit.apply_gate(gate)
 
     @staticmethod
     def gate_x(nqubit, sequence):
@@ -129,15 +138,23 @@ class Gates:
         elif sequence.length != nqubit.length:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
-            # Apply X as HZH
-            Gates.gate_h(nqubit, sequence)
-            Gates.gate_z(nqubit, sequence)
-            Gates.gate_h(nqubit, sequence)
+            # X equals HZH.
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
+            base_matrix = np.matrix([[0, 1],
+                                     [1, 0]], dtype=np.complex_)
+            targets = sequence.get_decimal_states()
+
+            for i in range(2):
+                for j in range(2):
+                    gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
+
+            gate = GateMatrix(gate_matrix)
+            nqubit.apply_gate(gate)
 
     @staticmethod
     def gate_toffoli(nqubit):
         """
-        Implements the Toffoli Quantum Gate.  If the first two bits are in the state |1> , it applies a Pauli-X
+        Implements the Toffoli Quantum Gate. If the first two bits are in the state |1> , it applies a Pauli-X
         (or NOT) on the third bit, else it does nothing. It is an example of a controlled gate.
 
         Source: https://en.wikipedia.org/wiki/Quantum_gate#Toffoli_gate
