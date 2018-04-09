@@ -2,12 +2,12 @@
 from types import IntType, LongType
 from math import log
 import numpy as np
-from gatematrix import GateMatrix
+from gate import Gate
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
-class NQubit:
 
+class NQubit:
     def __init__(self, length, state=0):
         """
         Creates the array that represents all "2*length" possible quantum states, given a set of "n" qubits.
@@ -15,7 +15,7 @@ class NQubit:
         :param length: Number of qubits that the n-qubit vector has.
         """
 
-        self._check_length(length) # May raise an exception.
+        self._check_length(length)  # May raise an exception.
 
         if type(state) != IntType and type(state) != LongType:
             raise TypeError('The state must be specified using whole number.')
@@ -25,16 +25,16 @@ class NQubit:
             # Number of qubits in the sequence.
             self._length = length
 
-            # Vector of n qubits, as Gaussian whole numbers.
+            # Vector of n qubits, as Gaussian integers.
             self.vector = np.matrix(np.zeros(int(pow(2, self.length)), dtype=np.complex_))
 
             # Normalization factor: [sqrt(2)]^(-k). Starts as sqrt(2)^(-0) = 1
             self.factor = 0
 
             for i in range(1, self.length):
-                self.vector[0,i] = 0.0 + 0.0j # Initialize each position of the array.
+                self.vector[0, i] = 0.0 + 0.0j  # Initialize each position of the array.
 
-            self.vector[0,state] = 1.0 + 0.0j # All n-qubits are initially set to |0>, with no superposition.
+            self.vector[0, state] = 1.0 + 0.0j  # All n-qubits are initially set to |0>, with no superposition.
 
     @property
     def vector(self):
@@ -85,10 +85,11 @@ class NQubit:
         :param gate : Gate to be applied.
         """
 
-        if not isinstance(gate, GateMatrix):
+        if not isinstance(gate, Gate):
             raise TypeError('The given parameter must be a quantum gate.')
         elif gate.length != self.length:
-            raise ValueError('This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self.length) + ' qubits found.')
+            raise ValueError(
+                'This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self.length) + ' qubits found.')
         else:
             # Multiply matrices.
             self.vector = self.vector.dot(gate.matrix)
@@ -99,8 +100,8 @@ class NQubit:
             # Update normalization factor.
             sum_squares = 0
             for i in range(int(pow(2, self.length))):
-                sum_squares += self.vector[0,i].real**2
-                sum_squares += self.vector[0,i].imag**2
+                sum_squares += self.vector[0, i].real ** 2
+                sum_squares += self.vector[0, i].imag ** 2
             self.factor = int(log(sum_squares, 2))
 
     def copy(self):
@@ -144,7 +145,7 @@ class NQubit:
         result = '('
 
         for i in range(pow(2, self.length)):
-            number = self.vector[0,i]
+            number = self.vector[0, i]
             result += self._complex_to_string(number)
 
             if i != pow(2, self.length) - 1:
@@ -174,25 +175,6 @@ class NQubit:
 
         return not self == nqubit
 
-    def _check_length(self, length):
-        """
-        Packs all checks concerning the n-qubit's length.
-
-        :param length: Length to be checked
-        :return: True if the length specified is right.
-        """
-
-        result = False
-
-        if type(length) != IntType and type(length) != LongType:
-            raise TypeError('The length must be a whole number.')
-        elif length < 1:
-            raise ValueError('The length can not be equal to or lower than 0.')
-        else:
-            result = True
-
-        return result
-
     def _simplify(self):
         """
         Tries to divide the whole vector by two, to ensure that H^2=I.
@@ -201,19 +183,38 @@ class NQubit:
         while divide:
             i = 0
             while i < int(pow(2, self.length)) and divide:
-                divide = self.vector[0,i].real % 2 == 0
-                divide = self.vector[0,i].imag % 2 == 0 and divide
+                divide = self.vector[0, i].real % 2 == 0
+                divide = self.vector[0, i].imag % 2 == 0 and divide
                 i += 1
 
             if divide:
                 for i in range(int(pow(2, self.length))):
-                    self.vector[0,i] /= 2
+                    self.vector[0, i] /= 2
 
-    def _complex_to_string(self, number):
+    @staticmethod
+    def _check_length(length):
+        """
+        Packs all checks concerning the n-qubit's length.
+
+        :param length: Length to be checked
+        :return: True if the length specified is right.
+        """
+
+        result = True
+
+        if type(length) != IntType and type(length) != LongType:
+            raise TypeError('The length must be a whole number.')
+        elif length < 1:
+            raise ValueError('The length can not be equal to or lower than 0.')
+
+        return result
+
+    @staticmethod
+    def _complex_to_string(number):
         """
         Converts a complex number to a Gaussian integer formatted as a string.
 
-        :param complex: Complex number.
+        :param number: Complex number.
         :return: String format.
         """
         result = ''

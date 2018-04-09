@@ -1,6 +1,6 @@
 from unittest import TestCase
 from app.model.nqubit import NQubit
-from app.model.gatematrix import GateMatrix
+from app.model.gate import Gate
 import numpy as np
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
@@ -95,11 +95,11 @@ class TestNQubit(TestCase):
         self.assertEquals(self.n3_7.length, 3)
 
     def test_apply_gate(self):
-        gate2x2_i = GateMatrix(np.matrix([[1, 0],
+        gate2x2_i = Gate(np.matrix([[1, 0],
                                           [0, 1]], dtype=np.complex))
-        gate2x2_h = GateMatrix(np.matrix([[1,  1],
+        gate2x2_h = Gate(np.matrix([[1,  1],
                                           [1, -1]], dtype=np.complex))
-        gate4x4 = GateMatrix(np.matrix([[-1. + 1.j,  0. + 1.j, -10. - 1.j, 1. + 0.j],
+        gate4x4 = Gate(np.matrix([[-1. + 1.j,  0. + 1.j, -10. - 1.j, 1. + 0.j],
                                         [-5. + 0.j, -2. + 0.j,   5. - 3.j, 0. + 1.j],
                                         [-5. + 1.j,  0. + 1.j,   2. - 0.j, 2. - 1.j],
                                         [ 2. + 3.j,  1. - 1.j,   4. + 2.j, 0. + 4.j]
@@ -153,7 +153,7 @@ class TestNQubit(TestCase):
         self.assertNotEquals(self.n1_0, n_copy)
 
         n_copy = self.n1_0.copy()
-        gate2x2_hadamard = GateMatrix(np.matrix([[1,  1],
+        gate2x2_hadamard = Gate(np.matrix([[1,  1],
                                                     [1, -1]], dtype=np.complex))
         n_copy.apply_gate(gate2x2_hadamard)
         self.assertTrue(self.n1_0 != n_copy)

@@ -148,7 +148,6 @@ class Sequence:
 
         return bits
 
-
     @staticmethod
     def generate_all_with_gate(length):
         """

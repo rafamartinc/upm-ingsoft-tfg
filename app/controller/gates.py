@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from app.model.gatematrix import GateMatrix
+from app.model.gate import Gate
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
 
@@ -8,6 +8,9 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 
 
 class Gates:
+
+    def __init__(self):
+        pass
 
     @staticmethod
     def gate_h(nqubit, sequence):
@@ -39,9 +42,9 @@ class Gates:
 
                 for i in range(2):
                     for j in range(2):
-                        gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
+                        gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
 
-            gate = GateMatrix(gate_matrix)
+            gate = Gate(gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -66,9 +69,9 @@ class Gates:
 
             for i in range(2):
                 for j in range(2):
-                    gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
+                    gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
 
-            gate = GateMatrix(gate_matrix)
+            gate = Gate(gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -92,8 +95,8 @@ class Gates:
     @staticmethod
     def gate_z(nqubit, sequence):
         """
-        Implements the Pauli-Z Quantum Gate. It equates to a rotation around the Z-axis of the Bloch sphere by π radians.
-        Z equals V^2, as it negates the real part of the last quantum state.
+        Implements the Pauli-Z Quantum Gate. It equates to a rotation around the Z-axis of the Bloch
+        sphere by π radians. Z equals V^2, as it negates the real part of the last quantum state.
 
         Source: https://en.wikipedia.org/wiki/Quantum_gate#Pauli-Z_gate
 
@@ -115,9 +118,9 @@ class Gates:
 
             for i in range(2):
                 for j in range(2):
-                    gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
+                    gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
 
-            gate = GateMatrix(gate_matrix)
+            gate = Gate(gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod
@@ -146,9 +149,9 @@ class Gates:
 
             for i in range(2):
                 for j in range(2):
-                    gate_matrix[targets[i],targets[j]] = base_matrix[i,j]
+                    gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
 
-            gate = GateMatrix(gate_matrix)
+            gate = Gate(gate_matrix)
             nqubit.apply_gate(gate)
 
     @staticmethod

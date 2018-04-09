@@ -13,7 +13,8 @@ class View:
         """
         Main console output of the app.
 
-        :param string: Object to be printed.
+        :param o: Object to be printed.
         """
 
         print(str(o))
+

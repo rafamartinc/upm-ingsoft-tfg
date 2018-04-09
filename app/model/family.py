@@ -112,7 +112,8 @@ class Member:
         if self.parent is None:
             result += ' - Base node'
         else:
-            result += ' - from Node ' + str(self.parent) + ', gate ' + self.gate + ' with sequence ' + str(self.sequence) + '.'
+            result += ' - from Node ' + str(self.parent) + ', gate ' + self.gate\
+                      + ' with sequence ' + str(self.sequence) + '.'
 
         return result
 
@@ -168,13 +169,12 @@ class Family:
         :return: Integer of its position if the n-qubit is in the list, -1 otherwise.
         """
 
-        return self._list.has_key(str(nqubit))
+        return str(nqubit) in self._list
 
     def _filename(self, complexity):
         """
         Generates the name of the file to which the results are to be exported.
 
-        :param length: Number of qubits.
         :param complexity: Current complexity.
         """
 
