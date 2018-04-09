@@ -251,46 +251,42 @@ class Family:
                 for n in nodes:
                     self._generate_from_parent(n, g, next_nodes, complexity)
 
+            self._count_members(complexity)
             nodes = next_nodes
             complexity += 1
 
-    def count_family_members(self):
+    def _count_members(self, complexity):
         """
-        Counts all family members after calculating them, and prints the result.
+        Counts all family members for a given complexity, and prints the result.
         """
 
-        count = {}
-        complexity = 0
         file_name = self._filename(complexity)
 
-        while os.path.isfile(file_name):
+        if os.path.isfile(file_name):
 
             file_in = open(file_name, "r")
-            count[complexity] = {}
+            count = {}
 
-            line = file_in.readline()  # Ignore headers.
+            file_in.readline()  # Ignore headers.
+
             line = file_in.readline()
             while line is not '':
                 line = line.split(';')
 
-                if len(line) >= 3:
-                    k = int(line[2])
-                    if k in count[complexity].keys():
-                        count[complexity][k] += 1
-                    else:
-                        count[complexity][k] = 1
+                k = int(line[2])
+                if k in count.keys():
+                    count[k] += 1
+                else:
+                    count[k] = 1
 
                 line = file_in.readline()
 
             file_in.close()
 
-            complexity += 1
-            file_name = self._filename(complexity)
-
-        for c in count.keys():
-            View.display("COMPLEXITY " + str(c))
-            for k in count[c].keys():
-                View.display("     Level " + str(k) + ": " + str(count[c][k]))
+            if len(count.keys()) > 0:
+                View.display("COMPLEXITY " + str(complexity))
+                for k in count.keys():
+                    View.display("     Level " + str(k) + ": " + str(count[k]))
 
     def __repr__(self):
         """
