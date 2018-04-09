@@ -226,8 +226,9 @@ class Family:
         if complexity < max_complexity:
             file_name = self._filename(0)
             output = open(file_name, 'w')
+            output.write('id;nqubit;k;parent_id;gate;sequence;delta(k)\n')
             for i in self._list:
-                output.write(' - ' + self._list[i].to_file() + '\n')
+                output.write(self._list[i].to_file() + '\n')
             output.close()
 
         while complexity < max_complexity and len(nodes) > 0:
