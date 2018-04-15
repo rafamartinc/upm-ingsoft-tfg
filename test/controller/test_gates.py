@@ -2,8 +2,11 @@
 from unittest import TestCase
 from app.controller.gates import Gates
 from app.model.nqubit import NQubit
+from app.model.gate import Gate
 from app.model.sequence import Sequence
+
 import numpy as np
+from math import sqrt
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -11,7 +14,10 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 class TestGates(TestCase):
 
     def test_gate_h_n1(self):
-        s = Sequence('G')
+
+        h = Gate(np.matrix([[1 / sqrt(2), 1 / sqrt(2)],
+                            [1 / sqrt(2), - 1 / sqrt(2)]], dtype=np.complex), 'Hadamard')
+        s = Sequence(h)
 
         q = NQubit(1, 0)
         Gates.gate_h(q, s)
@@ -34,8 +40,11 @@ class TestGates(TestCase):
         self.assertEquals(q, NQubit(1, 1))
 
     def test_gate_h_n2_bg(self):
-        s1 = Sequence('0', 'G')
-        s2 = Sequence('1', 'G')
+
+        h = Gate(np.matrix([[1 / sqrt(2), 1 / sqrt(2)],
+                            [1 / sqrt(2), - 1 / sqrt(2)]], dtype=np.complex), 'Hadamard')
+        s1 = Sequence('0', h)
+        s2 = Sequence('1', h)
 
         q = NQubit(2, 0)
         Gates.gate_h(q, s1)
@@ -106,8 +115,11 @@ class TestGates(TestCase):
         self.assertEquals(q, NQubit(2, 3))
 
     def test_gate_h_n2_gb(self):
-        s1 = Sequence('G', '0')
-        s2 = Sequence('G', '1')
+
+        h = Gate(np.matrix([[1 / sqrt(2), 1 / sqrt(2)],
+                            [1 / sqrt(2), - 1 / sqrt(2)]], dtype=np.complex), 'Hadamard')
+        s1 = Sequence(h, '0')
+        s2 = Sequence(h, '1')
 
         q = NQubit(2, 0)
         Gates.gate_h(q, s1)
@@ -178,7 +190,10 @@ class TestGates(TestCase):
         self.assertEquals(q, NQubit(2, 3))
 
     def test_gate_v_n1(self):
-        s = Sequence('G')
+
+        v = Gate(np.matrix([[1, 0],
+                            [0, 1j]], dtype=np.complex), 'V')
+        s = Sequence(v)
 
         q = NQubit(1, 0)
         Gates.gate_v(q, s)
@@ -191,8 +206,11 @@ class TestGates(TestCase):
         self.assertEquals(q, target)
 
     def test_gate_v_n2_bg(self):
-        s1 = Sequence('0', 'G')
-        s2 = Sequence('1', 'G')
+
+        v = Gate(np.matrix([[1, 0],
+                            [0, 1j]], dtype=np.complex), 'V')
+        s1 = Sequence('0', v)
+        s2 = Sequence('1', v)
 
         q = NQubit(2, 0)
         Gates.gate_v(q, s1)
@@ -231,7 +249,10 @@ class TestGates(TestCase):
         self.assertEquals(q, target)
 
     def test_gate_v_n2_gb(self):
-        s1 = Sequence('G', '0')
+
+        v = Gate(np.matrix([[1, 0],
+                            [0, 1j]], dtype=np.complex), 'V')
+        s1 = Sequence(v, '0')
 
         q = NQubit(2, 0)
         Gates.gate_v(q, s1)

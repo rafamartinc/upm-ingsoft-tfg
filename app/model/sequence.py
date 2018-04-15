@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from types import IntType, LongType
+from app.model.gate import Gate
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -14,39 +15,28 @@ class Sequence:
         :param args: List of elements in the sequence, the accepted ones go as follows:
          1   : Control qubit, must be set to 1 to activate the gate.
          0   : Control qubit, must be set to 0 to activate the gate (uses NOT gates).
-         'G' : Qubit on which the gate is to be used.
+         'G' : Gate instance, to be applied to one qubit alone.
         """
-        error_msg = ""
-        abort = False
         count_g = 0
 
         i = 0
-        while i < len(args) and not abort:
+        while i < len(args):
 
             # Check type and value of each element of the sequence.
-            if args[i] != 'G' and args[i] != '0' and args[i] != '1':
-                abort = True
-
-            # Abort if necessary, specifying which element was incorrect.
-            if abort:
-                error_msg = """Element no.""" + str(i) + """ was not accepted.
-    All elements in the sequence must fall within one of the accepted options:
-    '1' for positive control qubits,
-    '0' for negative control qubits, and
-    'G' to state which qubit is to be affected by the gate."""
+            if isinstance(args[i], Gate):
+                if args[i].length != 1:
+                    raise ValueError('The Gate provided affects more than one qubit.')
+            elif args[i] != '0' and args[i] != '1':
+                raise TypeError('Element no. ' + str(i) + ' must either be a control (a 0 or a 1), or a Gate.')
 
             # Count number of qubits on which the gate is supposed to be applied.
-            if args[i] == 'G':
+            if isinstance(args[i], Gate):
                 count_g += 1
 
             i += 1
 
         if count_g != 1:
-            abort = True
-            error_msg = "The sequence must contain one 'G'."
-
-        if abort:
-            raise ValueError(error_msg)
+            raise ValueError("The sequence must contain exactly one gate.")
 
         self._seq = []
         for i in args:
@@ -59,7 +49,15 @@ class Sequence:
         :return: Resulting string.
         """
 
-        return str(self._seq)
+        result = '['
+
+        for i in self._seq:
+            result += "'" + str(i) + "', "
+
+        result = result[:-2]
+        result += ']'
+
+        return result
 
     def _get_length(self):
         return len(self._seq)
@@ -85,7 +83,7 @@ class Sequence:
             if i == '0' or i == '1':
                 int1 += i
                 int2 += i
-            elif i == 'G':
+            elif isinstance(i, Gate):
                 int1 += '0'
                 int2 += '1'
 
@@ -149,23 +147,28 @@ class Sequence:
         return bits
 
     @staticmethod
-    def generate_all_with_gate(length):
+    def generate_all_with_gate(gate, length):
         """
         Generate all the possible ways that a gate can be applied to a n-qubit, considering all
         possible controls as ones and zeros.
 
+        :param gate: Gate instance to be applied. Must have a length of one.
         :param length: Total length of the sequence, having in mind that one position will be
             the one to apply the gate on.
         :return: List of sequences.
         """
 
-        if type(length) != IntType and type(length) != LongType:
+        if not isinstance(gate, Gate):
+            raise TypeError('The gate must be a Gate instance.')
+        elif gate.length != 1:
+            raise ValueError('The gate must have a length of one.')
+        elif type(length) != IntType and type(length) != LongType:
             raise TypeError('The length must be a whole number.')
         elif length <= 0:
             raise ValueError('The length must be positive.')
         else:
             if length == 1:
-                result = [Sequence('G')]
+                result = [Sequence(gate)]
             else:
                 result = []
 
@@ -174,12 +177,28 @@ class Sequence:
 
                 # Insert 'G' in the sequence.
                 for b in bits:
-                    for i in range(len(b)):
-                        new_seq = [j for j in b]
-                        new_seq.insert(i, 'G')
-                        result.append(Sequence(*new_seq))
-                    new_seq = [j for j in b]
-                    new_seq.append('G')
-                    result.append(Sequence(*new_seq))
+                    result.extend(Sequence._insert_gate_all_positions(b, gate))
+
+        return result
+
+    @staticmethod
+    def _insert_gate_all_positions(arr, gate):
+        """
+        Receives a list of bits where a gate is to be inserted in every possible position,
+        and returns the sequences that can be formed with that criteria.
+
+        :param arr: Array of bits where the gate is to be inserted.
+        :return: List of sequences.
+        """
+
+        result = []
+
+        for i in range(len(arr)):
+            new_seq = arr[:]
+            new_seq.insert(i, gate)
+            result.append(Sequence(*new_seq))
+        new_seq = arr[:]
+        new_seq.append(gate)
+        result.append(Sequence(*new_seq))
 
         return result

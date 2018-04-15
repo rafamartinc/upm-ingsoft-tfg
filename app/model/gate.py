@@ -39,3 +39,29 @@ class Gate:
     def _get_length(self):
         return self._length
     length = property(_get_length)
+
+    def __repr__(self):
+        """
+        Converts the gate to a string format to be printed.
+
+        :return: Resulting string.
+        """
+        return self.initial
+
+    def __eq__(self, other):
+        """
+        Checks whether two gates are equivalent.
+
+        :param other: Gate instance.
+        :return: True if both instances are equal.
+        """
+
+        result = True
+
+        if not isinstance(other, Gate) \
+                or not np.array_equal(self.matrix, other.matrix) \
+                or self.length != other.length \
+                or self.identifier != other.identifier:
+            result = False
+
+        return result

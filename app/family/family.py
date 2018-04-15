@@ -1,121 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
-from types import IntType, LongType, StringType
+import numpy as np
+from types import IntType, LongType
+
+from app.family.member import Member
 from app.controller.gates import Gates
+from app.model.gate import Gate
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
 from app.view.view import View
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
-
-
-class Member:
-
-    def __init__(self, identifier, nqubit, parent=None, gate=None, sequence=None, complexity=0):
-        """
-        Sets a member of a family of n-qubits, to evaluate complexity and relationships.
-
-        :param nqubit: n-qubit that defines the member.
-        """
-
-        if type(identifier) != IntType and type(identifier) != LongType:
-            raise TypeError('The first parameter must be a whole number.')
-        elif not isinstance(nqubit, NQubit):
-            raise TypeError('The second parameter must be a NQubit instance.')
-        elif type(parent) != IntType and type(parent) != LongType and parent is not None:
-            raise TypeError('The third parameter must be the id of another Node.')
-        elif type(gate) != StringType and gate is not None:
-            raise TypeError('The fourth parameter must be a character representing a gate.')
-        elif not isinstance(sequence, Sequence) and sequence is not None:
-            raise TypeError('The fifth parameter must be a sequence instance.')
-        elif type(complexity) != IntType and type(complexity) != LongType:
-            raise TypeError('The sixth parameter must be a whole number.')
-        else:
-            self._identifier = identifier
-            self._nqubit = nqubit
-
-            self._parent = parent
-            self._gate = gate
-            self._sequence = sequence
-            self._complexity = complexity
-
-    @property
-    def identifier(self):
-        """
-        id is a property
-        This is the getter method
-        """
-        return self._identifier
-
-    @property
-    def nqubit(self):
-        """
-        nqubit is a property
-        This is the getter method
-        """
-        return self._nqubit
-
-    @property
-    def parent(self):
-        """
-        parent is a property
-        This is the getter method
-        """
-        return self._parent
-
-    @property
-    def gate(self):
-        """
-        gate is a property
-        This is the getter method
-        """
-        return self._gate
-
-    @property
-    def sequence(self):
-        """
-        sequence is a property
-        This is the getter method
-        """
-        return self._sequence
-
-    @property
-    def complexity(self):
-        """
-        complexity is a property
-        This is the getter method
-        """
-        return self._complexity
-
-    def to_file(self):
-        """
-        Converts the node to a string format to be exported to file.
-
-        :return: Resulting string.
-        """
-
-        result = str(self.identifier) + ';' + self.nqubit.to_file()
-
-        if self.parent is not None:
-            result += ';' + str(self.parent) + ';' + self.gate + ';' + str(self.sequence)
-
-        return result
-
-    def __repr__(self):
-        """
-        Converts the node to a string format to be printed.
-
-        :return: Resulting string.
-        """
-        result = str(self.identifier) + ' : ' + str(self.nqubit)
-
-        if self.parent is None:
-            result += ' - Base node'
-        else:
-            result += ' - from Node ' + str(self.parent) + ', gate ' + self.gate\
-                      + ' with sequence ' + str(self.sequence) + '.'
-
-        return result
 
 
 class Family:
@@ -190,12 +85,11 @@ class Family:
         :param complexity: Current complexity.
         """
 
-        for seq in Sequence.generate_all_with_gate(self.length):
+        for seq in Sequence.generate_all_with_gate(Gate(np.matrix([[1,0],[0,1]])), self.length):
             nqubit = self._list[parent_id].nqubit.copy()
             gate['f'](nqubit, seq)
 
             if not self._contains(nqubit):
-
                 new_node = Member(len(self._list), nqubit, self._list[parent_id].identifier,
                                   gate['tag'], seq, self._list[parent_id].complexity + 1)
                 self._list[str(new_node.nqubit)] = new_node

@@ -2,6 +2,7 @@
 from types import IntType, LongType
 from math import log
 import numpy as np
+
 from gate import Gate
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
