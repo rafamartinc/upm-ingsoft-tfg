@@ -82,7 +82,12 @@ class Member:
         complexity is a property
         This is the getter method
         """
-        return self._complexity
+        result = 0
+
+        if self._complexity is not None:
+            result = self._complexity
+
+        return result
 
     def to_file(self):
         """

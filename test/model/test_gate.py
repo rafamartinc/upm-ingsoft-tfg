@@ -83,6 +83,10 @@ class TestGate(TestCase):
         self.failUnlessRaises(ValueError, Gate, self.matrix5x5)
         self.failUnlessRaises(ValueError, Gate, self.matrix6x6)
 
+        # Wrong identifiers.
+        self.failUnlessRaises(TypeError, Gate, self.matrix2x2, 0)
+        self.failUnlessRaises(ValueError, Gate, self.matrix2x2, '')
+
     def test_matrix(self):
         for g in self.gates1:
             self.assertTrue(np.array_equal(g.matrix, self.matrix2x2))
@@ -112,3 +116,77 @@ class TestGate(TestCase):
             self.assertEquals(g.length, 2)
         for g in self.gates3:
             self.assertEquals(g.length, 3)
+            
+    def test___repr__(self):
+        initials = ['A', 'A', 'B', 'G', 'D', 'E', 'T']
+        for g in range(len(initials)):
+            self.assertEquals(str(self.gates1[g]), initials[g])
+            self.assertEquals(str(self.gates2[g]), initials[g])
+            self.assertEquals(str(self.gates3[g]), initials[g])
+
+    def test___eq__(self):
+        aux_g1a = Gate(self.matrix2x2)
+        aux_g2a = Gate(self.matrix2x2, 'Alpha')
+        aux_g3a = Gate(self.matrix2x2, 'Beta')
+        aux_g4a = Gate(self.matrix2x2, 'Gamma')
+        aux_g5a = Gate(self.matrix2x2, 'Delta')
+        aux_g6a = Gate(self.matrix2x2, 'Eta')
+        aux_g7a = Gate(self.matrix2x2, 'Theta')
+        aux_g1b = Gate(self.matrix4x4)
+        aux_g2b = Gate(self.matrix4x4, 'Alpha')
+        aux_g3b = Gate(self.matrix4x4, 'Beta')
+        aux_g4b = Gate(self.matrix4x4, 'Gamma')
+        aux_g5b = Gate(self.matrix4x4, 'Delta')
+        aux_g6b = Gate(self.matrix4x4, 'Eta')
+        aux_g7b = Gate(self.matrix4x4, 'Theta')
+        aux_g1c = Gate(self.matrix8x8)
+        aux_g2c = Gate(self.matrix8x8, 'Alpha')
+        aux_g3c = Gate(self.matrix8x8, 'Beta')
+        aux_g4c = Gate(self.matrix8x8, 'Gamma')
+        aux_g5c = Gate(self.matrix8x8, 'Delta')
+        aux_g6c = Gate(self.matrix8x8, 'Eta')
+        aux_g7c = Gate(self.matrix8x8, 'Theta')
+
+        aux_gates1 = [aux_g1a, aux_g2a, aux_g3a, aux_g4a, aux_g5a, aux_g6a, aux_g7a]
+        aux_gates2 = [aux_g1b, aux_g2b, aux_g3b, aux_g4b, aux_g5b, aux_g6b, aux_g7b]
+        aux_gates3 = [aux_g1c, aux_g2c, aux_g3c, aux_g4c, aux_g5c, aux_g6c, aux_g7c]
+
+        # Cases that are equal.
+        for i in range(len(aux_gates1)):
+            self.assertTrue(aux_gates1[i] == self.gates1[i])
+        for i in range(len(aux_gates2)):
+            self.assertTrue(aux_gates2[i] == self.gates2[i])
+        for i in range(len(aux_gates3)):
+            self.assertTrue(aux_gates3[i] == self.gates3[i])
+
+        # Cases that differ on their matrix size.
+        for i in range(len(aux_gates1)):
+            self.assertFalse(aux_gates1[i] == self.gates2[i])
+            self.assertFalse(aux_gates1[i] == self.gates3[i])
+        for i in range(len(aux_gates2)):
+            self.assertFalse(aux_gates2[i] == self.gates1[i])
+            self.assertFalse(aux_gates2[i] == self.gates3[i])
+        for i in range(len(aux_gates3)):
+            self.assertFalse(aux_gates3[i] == self.gates1[i])
+            self.assertFalse(aux_gates3[i] == self.gates2[i])
+
+        # Cases that differ on their identifier.
+        for i in range(len(aux_gates1)):
+            for j in range(len(aux_gates1)):
+                if i != j:
+                    self.assertFalse(self.gates1[i] == self.gates1[j])
+                    self.assertFalse(self.gates2[i] == self.gates2[j])
+                    self.assertFalse(self.gates3[i] == self.gates3[j])
+
+        # Cases that only differ on the matrix contents.
+        aux_g1a_2 = Gate(np.matrix([[0, 1],
+                                    [1, 0]], dtype=np.complex_))
+        self.assertFalse(aux_g1a == aux_g1a_2)
+
+    def test___ne__(self):
+        aux_g1a_eq = Gate(self.matrix2x2)
+        aux_g1a_ne = Gate(np.matrix([[0, 1],
+                                    [1, 0]], dtype=np.complex_))
+
+        self.assertFalse(self.g1a != aux_g1a_eq)
+        self.assertTrue(self.g1a != aux_g1a_ne)

@@ -65,3 +65,13 @@ class Gate:
             result = False
 
         return result
+
+    def __ne__(self, other):
+        """
+        Checks whether two gates are not equal.
+
+        :param other: Gate instance.
+        :return: True if both instances are different.
+        """
+
+        return not self == other

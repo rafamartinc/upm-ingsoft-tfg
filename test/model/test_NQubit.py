@@ -105,6 +105,11 @@ class TestNQubit(TestCase):
                                         [ 2. + 3.j,  1. - 1.j,   4. + 2.j, 0. + 4.j]
                                                                 ], dtype=np.complex))
 
+        # Check exception.
+        n_copy = self.n1_0.copy()
+        self.failUnlessRaises(TypeError, n_copy.apply_gate, '')
+        self.failUnlessRaises(ValueError, n_copy.apply_gate, gate4x4)
+
         # Check identity matrix with 1 qubit as |0>
         n_copy = self.n1_0.copy()
         n_copy.apply_gate(gate2x2_i)
@@ -158,6 +163,22 @@ class TestNQubit(TestCase):
         n_copy.apply_gate(gate2x2_hadamard)
         self.assertTrue(self.n1_0 != n_copy)
 
+    def test_to_file(self):
+        self.assertEquals(self.n1_0.to_file(), "(1,0);0")
+        self.assertEquals(self.n1_1.to_file(), "(0,1);0")
+        self.assertEquals(self.n2_0.to_file(), "(1,0,0,0);0")
+        self.assertEquals(self.n2_1.to_file(), "(0,1,0,0);0")
+        self.assertEquals(self.n2_2.to_file(), "(0,0,1,0);0")
+        self.assertEquals(self.n2_3.to_file(), "(0,0,0,1);0")
+        self.assertEquals(self.n3_0.to_file(), "(1,0,0,0,0,0,0,0);0")
+        self.assertEquals(self.n3_1.to_file(), "(0,1,0,0,0,0,0,0);0")
+        self.assertEquals(self.n3_2.to_file(), "(0,0,1,0,0,0,0,0);0")
+        self.assertEquals(self.n3_3.to_file(), "(0,0,0,1,0,0,0,0);0")
+        self.assertEquals(self.n3_4.to_file(), "(0,0,0,0,1,0,0,0);0")
+        self.assertEquals(self.n3_5.to_file(), "(0,0,0,0,0,1,0,0);0")
+        self.assertEquals(self.n3_6.to_file(), "(0,0,0,0,0,0,1,0);0")
+        self.assertEquals(self.n3_7.to_file(), "(0,0,0,0,0,0,0,1);0")
+
     def test___repr__(self):
         self.assertEquals(self.n1_0.__repr__(), "(1, 0) * sqrt(2)^(0)")
         self.assertEquals(self.n1_1.__repr__(), "(0, 1) * sqrt(2)^(0)")
@@ -209,3 +230,43 @@ class TestNQubit(TestCase):
         self.assertTrue(self.n2_0 != NQubit(2,2))
         self.assertTrue(self.n2_0 != NQubit(2,3))
         self.assertTrue(self.n2_0 != NQubit(1))
+
+    def test__simplify(self):
+        pass
+
+    def test__check_length(self):
+        self.failUnlessRaises(TypeError, NQubit._check_length, '')
+        self.failUnlessRaises(TypeError, NQubit._check_length, 0.5)
+        self.failUnlessRaises(ValueError, NQubit._check_length, 0)
+        self.failUnlessRaises(ValueError, NQubit._check_length, -1)
+
+    def __complex_to_string(self):
+        self.assertEquals('1+i', NQubit._complex_to_string(1 + 1j))
+        self.assertEquals('0.5+i', NQubit._complex_to_string(0.5 + 1j))
+        self.assertEquals('i', NQubit._complex_to_string(0 + 1j))
+        self.assertEquals('-0.5+i', NQubit._complex_to_string(-0.5 + 1j))
+        self.assertEquals('-1+i', NQubit._complex_to_string(-1 + 1j))
+
+        self.assertEquals('1+0.5i', NQubit._complex_to_string(1 + 0.5j))
+        self.assertEquals('0.5+0.5i', NQubit._complex_to_string(0.5 + 0.5j))
+        self.assertEquals('0.5i', NQubit._complex_to_string(0 + 0.5j))
+        self.assertEquals('-0.5+0.5i', NQubit._complex_to_string(-0.5 + 0.5j))
+        self.assertEquals('-1+0.5i', NQubit._complex_to_string(-1 + 0.5j))
+
+        self.assertEquals('1', NQubit._complex_to_string(1 + 0j))
+        self.assertEquals('0.5', NQubit._complex_to_string(0.5 + 0j))
+        self.assertEquals('0', NQubit._complex_to_string(0 + 0j))
+        self.assertEquals('-0.5', NQubit._complex_to_string(-0.5 + 0j))
+        self.assertEquals('-1', NQubit._complex_to_string(-1 + 0j))
+
+        self.assertEquals('1-0.5i', NQubit._complex_to_string(1 - 0.5j))
+        self.assertEquals('0.5-0.5i', NQubit._complex_to_string(0.5 - 0.5j))
+        self.assertEquals('-0.5i', NQubit._complex_to_string(0 - 0.5j))
+        self.assertEquals('-0.5-0.5i', NQubit._complex_to_string(-0.5 - 0.5j))
+        self.assertEquals('-1-0.5i', NQubit._complex_to_string(-1 - 0.5j))
+
+        self.assertEquals('1-i', NQubit._complex_to_string(1 - 1j))
+        self.assertEquals('0.5-i', NQubit._complex_to_string(0.5 - 1j))
+        self.assertEquals('-i', NQubit._complex_to_string(0 - 1j))
+        self.assertEquals('-0.5-i', NQubit._complex_to_string(-0.5 - 1j))
+        self.assertEquals('-1-i', NQubit._complex_to_string(-1 - 1j))

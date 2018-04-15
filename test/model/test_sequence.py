@@ -19,15 +19,18 @@ class TestSequence(TestCase):
         self.sequence3b = Sequence('1', '1', self.g)
 
     def test___init__(self):
-        self.failUnlessRaises(ValueError, Sequence)                  # No parameters found.
-        self.failUnlessRaises(TypeError, Sequence, 0)               # Integer is not valid.
-        self.failUnlessRaises(TypeError, Sequence, 1)               # Integer is not valid
-        self.failUnlessRaises(ValueError, Sequence, '0')             # No gate found.
-        self.failUnlessRaises(ValueError, Sequence, '1')             # No gate found.
-        self.failUnlessRaises(TypeError, Sequence, 'x')             # No gate found.
-        self.failUnlessRaises(TypeError, Sequence, self.g, 0)       # Integer is not valid.
-        self.failUnlessRaises(TypeError, Sequence, self.g, 1)       # Integer is not valid.
-        self.failUnlessRaises(ValueError, Sequence, self.g, self.g)  # Too many gates.
+        self.failUnlessRaises(ValueError, Sequence)                     # No parameters found.
+        self.failUnlessRaises(TypeError, Sequence, 0)                   # Integer is not valid.
+        self.failUnlessRaises(TypeError, Sequence, 1)                   # Integer is not valid
+        self.failUnlessRaises(ValueError, Sequence, '0')                # No gate found.
+        self.failUnlessRaises(ValueError, Sequence, '1')                # No gate found.
+        self.failUnlessRaises(TypeError, Sequence, 'x')                 # No gate found.
+        self.failUnlessRaises(TypeError, Sequence, self.g, 0)           # Integer is not valid.
+        self.failUnlessRaises(TypeError, Sequence, self.g, 1)           # Integer is not valid.
+        self.failUnlessRaises(ValueError, Sequence, self.g, self.g)     # Too many gates.
+
+        gate = Gate(np.matrix(np.identity(4, dtype=np.complex_)))
+        self.failUnlessRaises(ValueError, Sequence, gate)               # 2-qubit gate.
 
     def test___repr__(self):
         self.assertEquals(str(self.sequence1), "['A']")
@@ -112,6 +115,8 @@ class TestSequence(TestCase):
 
     def test_generate_all_without_gate(self):
 
+        # Sequences with size one.
+
         target_1 = ["['0']", "['1']"]
 
         result_1 = Sequence.generate_all_without_gate(1)
@@ -120,6 +125,8 @@ class TestSequence(TestCase):
             self.assertTrue(i in result_1)
         self.assertEquals(len(Sequence.generate_all_without_gate(1)), len(target_1))
 
+        # Sequences with size two.
+
         target_2 = ["['0', '0']", "['0', '1']", "['1', '0']", "['1', '1']"]
 
         result_2 = Sequence.generate_all_without_gate(2)
@@ -127,6 +134,8 @@ class TestSequence(TestCase):
         for i in target_2:
             self.assertTrue(i in result_2)
         self.assertEquals(len(Sequence.generate_all_without_gate(2)), len(target_2))
+
+        # Sequences with size three.
 
         target_3 = ["['0', '0', '0']", "['0', '0', '1']", "['0', '1', '0']", "['0', '1', '1']",
                     "['1', '0', '0']", "['1', '0', '1']", "['1', '1', '0']", "['1', '1', '1']"]
@@ -137,8 +146,19 @@ class TestSequence(TestCase):
             self.assertTrue(i in result_3)
         self.assertEquals(len(Sequence.generate_all_without_gate(3)), len(target_3))
 
+        # Exception cases.
+
+        self.failUnlessRaises(TypeError, Sequence.generate_all_without_gate, '')
+        self.failUnlessRaises(TypeError, Sequence.generate_all_without_gate, 0.5)
+        self.failUnlessRaises(ValueError, Sequence.generate_all_without_gate, -1)
+
     def test_generate_all_with_gate(self):
+
+        # Sequences with size one.
+
         self.assertEquals(str(Sequence.generate_all_with_gate(self.g, 1)), "[['A']]")
+
+        # Sequences with size two.
 
         target_2 = ["['0', 'A']", "['1', 'A']", "['A', '0']", "['A', '1']"]
 
@@ -147,6 +167,8 @@ class TestSequence(TestCase):
         for i in target_2:
             self.assertTrue(i in result_2)
         self.assertEquals(len(Sequence.generate_all_with_gate(self.g, 2)), len(target_2))
+
+        # Sequences with size three.
 
         target_3 = ["['0', '0', 'A']", "['0', '1', 'A']", "['1', '0', 'A']", "['1', '1', 'A']",
                     "['0', 'A', '0']", "['0', 'A', '1']", "['1', 'A', '0']", "['1', 'A', '1']",
@@ -157,3 +179,12 @@ class TestSequence(TestCase):
         for i in target_3:
             self.assertTrue(i in result_3)
         self.assertEquals(len(Sequence.generate_all_with_gate(self.g, 3)), len(target_3))
+
+        # Exception cases.
+
+        gate = Gate(np.matrix(np.identity(4, dtype=np.complex_)))
+        self.failUnlessRaises(TypeError, Sequence.generate_all_with_gate, '', 1)
+        self.failUnlessRaises(ValueError, Sequence.generate_all_with_gate, gate, 1)
+        self.failUnlessRaises(TypeError, Sequence.generate_all_with_gate, self.g, '')
+        self.failUnlessRaises(TypeError, Sequence.generate_all_with_gate, self.g, 0.5)
+        self.failUnlessRaises(ValueError, Sequence.generate_all_with_gate, self.g, -1)

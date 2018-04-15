@@ -42,6 +42,14 @@ class Sequence:
         for i in args:
             self._seq.append(i)
 
+    def _get_length(self):
+        return len(self._seq)
+    length = property(_get_length)
+
+    def _get_array(self):
+        return self._seq
+    array = property(_get_array)
+
     def __repr__(self):
         """
         Converts the sequence to a string format to be printed.
@@ -58,14 +66,6 @@ class Sequence:
         result += ']'
 
         return result
-
-    def _get_length(self):
-        return len(self._seq)
-    length = property(_get_length)
-
-    def _get_array(self):
-        return self._seq
-    array = property(_get_array)
 
     def get_decimal_states(self):
         """
