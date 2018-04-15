@@ -3,7 +3,6 @@ import numpy as np
 from app.model.gate import Gate
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
-from app.view.view import View
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 

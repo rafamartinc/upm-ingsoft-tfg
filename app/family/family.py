@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import numpy as np
-from types import IntType, LongType
 
 from app.family.member import Member
 from app.controller.gates import Gates
@@ -23,13 +22,13 @@ class Family:
         :param max_complexity: Max complexity to reach in the family.
         """
 
-        if type(length) != IntType and type(length) != LongType:
+        if not isinstance(length, int):
             raise TypeError('The first parameter must be a whole number.')
         elif length <= 0:
             raise ValueError('The first parameter must be positive')
-        if type(length) != IntType and type(length) != LongType:
+        if not isinstance(max_complexity, int):
             raise TypeError('The second parameter must be a whole number.')
-        elif length <= 0:
+        elif max_complexity <= 0:
             raise ValueError('The second parameter must be positive')
         else:
             self._length = length
@@ -178,9 +177,9 @@ class Family:
 
             file_in.close()
 
-            if len(count.keys()) > 0:
+            if len(count) > 0:
                 View.display("COMPLEXITY " + str(complexity))
-                for k in count.keys():
+                for k in count:
                     View.display("     Level " + str(k) + ": " + str(count[k]))
 
     def __repr__(self):

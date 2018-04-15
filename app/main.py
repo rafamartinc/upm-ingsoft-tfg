@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+import time
+
 from app.family.family import Family
 from app.view.view import View
-import time
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 

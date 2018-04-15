@@ -154,10 +154,6 @@ class TestNQubit(TestCase):
         self.assertNotEquals(self.n1_0, n_copy)
 
         n_copy = self.n1_0.copy()
-        n_copy.length = 10
-        self.assertNotEquals(self.n1_0, n_copy)
-
-        n_copy = self.n1_0.copy()
         gate2x2_hadamard = Gate(np.matrix([[1,  1],
                                                     [1, -1]], dtype=np.complex))
         n_copy.apply_gate(gate2x2_hadamard)

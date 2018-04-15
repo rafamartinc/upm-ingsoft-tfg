@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from types import IntType, LongType
 from math import log
 import numpy as np
 
-from gate import Gate
+from app.model.gate import Gate
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -14,11 +13,12 @@ class NQubit:
         Creates the array that represents all "2*length" possible quantum states, given a set of "n" qubits.
 
         :param length: Number of qubits that the n-qubit vector has.
+        :param state: Initial classic state for the qubit to start in.
         """
 
         self._check_length(length)  # May raise an exception.
 
-        if type(state) != IntType and type(state) != LongType:
+        if not isinstance(state, int):
             raise TypeError('The state must be specified using whole number.')
         elif state < 0 or state > pow(2, length) - 1:
             raise ValueError('The state must be within 0 and 2^length-1')
@@ -54,7 +54,7 @@ class NQubit:
             raise TypeError("The n-qubit vector must be a Numpy 2D matrix.")
         else:
             self._vector = vector
-            self._length = log(vector.size, 2)
+            self._length = int(log(vector.size, 2))
 
     @property
     def factor(self):
@@ -203,7 +203,7 @@ class NQubit:
 
         result = True
 
-        if type(length) != IntType and type(length) != LongType:
+        if not isinstance(length, int):
             raise TypeError('The length must be a whole number.')
         elif length < 1:
             raise ValueError('The length can not be equal to or lower than 0.')

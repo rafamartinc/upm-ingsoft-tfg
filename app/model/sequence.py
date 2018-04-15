@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from types import IntType, LongType
 from app.model.gate import Gate
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
@@ -130,7 +129,7 @@ class Sequence:
         :return: List of sequences in array format (as sequences should have a gate).
         """
 
-        if type(length) != IntType and type(length) != LongType:
+        if not isinstance(length, int):
             raise TypeError('The length must be a whole number.')
         elif length <= 0:
             raise ValueError('The length must be positive.')
@@ -162,7 +161,7 @@ class Sequence:
             raise TypeError('The gate must be a Gate instance.')
         elif gate.length != 1:
             raise ValueError('The gate must have a length of one.')
-        elif type(length) != IntType and type(length) != LongType:
+        elif not isinstance(length, int):
             raise TypeError('The length must be a whole number.')
         elif length <= 0:
             raise ValueError('The length must be positive.')

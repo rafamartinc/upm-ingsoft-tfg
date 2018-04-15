@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from types import IntType, LongType, StringType
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
 
@@ -15,17 +14,17 @@ class Member:
         :param nqubit: n-qubit that defines the member.
         """
 
-        if type(identifier) != IntType and type(identifier) != LongType:
+        if not isinstance(identifier, int):
             raise TypeError('The first parameter must be a whole number.')
         elif not isinstance(nqubit, NQubit):
             raise TypeError('The second parameter must be a NQubit instance.')
-        elif type(parent) != IntType and type(parent) != LongType and parent is not None:
+        elif not isinstance(parent, int) and parent is not None:
             raise TypeError('The third parameter must be the id of another Node.')
-        elif type(gate) != StringType and gate is not None:
+        elif not isinstance(gate, str) and gate is not None:
             raise TypeError('The fourth parameter must be a character representing a gate.')
         elif not isinstance(sequence, Sequence) and sequence is not None:
             raise TypeError('The fifth parameter must be a sequence instance.')
-        elif type(complexity) != IntType and type(complexity) != LongType:
+        elif not isinstance(complexity, int):
             raise TypeError('The sixth parameter must be a whole number.')
         else:
             self._identifier = identifier
