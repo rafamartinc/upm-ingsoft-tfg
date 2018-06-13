@@ -34,7 +34,7 @@ class Gates:
         else:
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
             base_matrix = np.matrix([[1,  1],
-                                     [1, -1]], dtype=np.complex_)
+                                     [1, -1]], dtype=np.complex)
 
             all_sequences = sequence.alter_controls()
             for s in all_sequences:
@@ -46,6 +46,46 @@ class Gates:
 
             gate = Gate(gate_matrix)
             nqubit.apply_gate(gate)
+
+    @staticmethod
+    def gate_h0(nqubit, sequence):
+        """
+        Implements a modified version of the Hadamard Quantum Gate.
+
+        :return: Resulting nqubit.
+        """
+
+        if not isinstance(nqubit, NQubit):
+            raise TypeError('The first parameter must be a NQubit instance.')
+        if not isinstance(sequence, Sequence):
+            raise TypeError('The second parameter must be a Sequence instance.')
+        elif sequence.length != nqubit.length:
+            raise ValueError('The length of the sequence does not match the number of qubits given.')
+        else:
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
+            base_matrix = np.matrix([[-1,  1],
+                                     [1, 1]], dtype=np.complex)
+
+            all_sequences = sequence.alter_controls()
+            for s in all_sequences:
+                targets = s.get_decimal_states()
+
+                for i in range(2):
+                    for j in range(2):
+                        gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
+
+            gate = Gate(gate_matrix)
+            nqubit.apply_gate(gate)
+
+    @staticmethod
+    def gate_h1(nqubit, sequence):
+        """
+        Implements an alternative interface for the Hadamard gate.
+
+        :return: Resulting nqubit.
+        """
+
+        Gates.gate_h(nqubit, sequence)
 
     @staticmethod
     def gate_v(nqubit, sequence):
@@ -64,7 +104,7 @@ class Gates:
         else:
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
             base_matrix = np.matrix([[1,  0],
-                                     [0, 1j]], dtype=np.complex_)
+                                     [0, 1j]], dtype=np.complex)
             targets = sequence.get_decimal_states()
 
             for i in range(2):
@@ -73,6 +113,43 @@ class Gates:
 
             gate = Gate(gate_matrix)
             nqubit.apply_gate(gate)
+
+    @staticmethod
+    def gate_v0(nqubit, sequence):
+        """
+        Implements the V Quantum Gate, altered to modify the stat |0> instea of state |1>..
+
+        :return: Resulting nqubit.
+        """
+
+        if not isinstance(nqubit, NQubit):
+            raise TypeError('The first parameter must be a NQubit instance.')
+        if not isinstance(sequence, Sequence):
+            raise TypeError('The second parameter must be a Sequence instance.')
+        elif sequence.length != nqubit.length:
+            raise ValueError('The length of the sequence does not match the number of qubits given.')
+        else:
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
+            base_matrix = np.matrix([[1j,  0],
+                                     [0, 1]], dtype=np.complex)
+            targets = sequence.get_decimal_states()
+
+            for i in range(2):
+                for j in range(2):
+                    gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
+
+            gate = Gate(gate_matrix)
+            nqubit.apply_gate(gate)
+
+    @staticmethod
+    def gate_v1(nqubit, sequence):
+        """
+        Displays an alternative name for the gate V, that affects state |1>.
+
+        :return: Resulting nqubit.
+        """
+
+        Gates.gate_v(nqubit, sequence)
 
     @staticmethod
     def gate_g(nqubit):
@@ -113,7 +190,7 @@ class Gates:
             # C^k(Z) equals (C^k(V))^2.
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
             base_matrix = np.matrix([[1,  0],
-                                     [0, -1]], dtype=np.complex_)
+                                     [0, -1]], dtype=np.complex)
             targets = sequence.get_decimal_states()
 
             for i in range(2):
@@ -122,6 +199,43 @@ class Gates:
 
             gate = Gate(gate_matrix)
             nqubit.apply_gate(gate)
+
+    @staticmethod
+    def gate_z0(nqubit, sequence):
+        """
+        Implements a modified version of the Pauli-Z Quantum Gate, that affects state |0> instead of |1>.
+
+        :return: Resulting nqubit.
+        """
+
+        if not isinstance(nqubit, NQubit):
+            raise TypeError('The first parameter must be a NQubit instance.')
+        if not isinstance(sequence, Sequence):
+            raise TypeError('The second parameter must be a Sequence instance.')
+        elif sequence.length != nqubit.length:
+            raise ValueError('The length of the sequence does not match the number of qubits given.')
+        else:
+            gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
+            base_matrix = np.matrix([[-1,  0],
+                                     [0, 1]], dtype=np.complex)
+            targets = sequence.get_decimal_states()
+
+            for i in range(2):
+                for j in range(2):
+                    gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
+
+            gate = Gate(gate_matrix)
+            nqubit.apply_gate(gate)
+
+    @staticmethod
+    def gate_z1(nqubit, sequence):
+        """
+        Displays an alternative name for the gate Z, that affects state |1>.
+
+        :return: Resulting nqubit.
+        """
+
+        Gates.gate_z(nqubit, sequence)
 
     @staticmethod
     def gate_x(nqubit, sequence):
@@ -144,7 +258,7 @@ class Gates:
             # X equals HZH.
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
             base_matrix = np.matrix([[0, 1],
-                                     [1, 0]], dtype=np.complex_)
+                                     [1, 0]], dtype=np.complex)
             targets = sequence.get_decimal_states()
 
             for i in range(2):

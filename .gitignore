@@ -7,5 +7,5 @@
 sonar.bat
 .scannerwork
 *.pyc
-app/data/*
+app/data*
 coverage.lnk
