@@ -3,6 +3,7 @@ from math import log
 import numpy as np
 
 from app.model.gate import Gate
+from app.model.sequence import Sequence
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -80,19 +81,35 @@ class NQubit:
         """
         return self._length
 
-    def apply_gate(self, gate):
+    def apply_gate(self, sequence):
         """
-        Applies the specified gate to the n-qubit, if possible.
+        Applies the specified operation to the n-qubit, if possible.
 
-        :param gate : Gate to be applied.
+        :param sequence : Configuration of the operation that is to be applied.
         """
 
-        if not isinstance(gate, Gate):
-            raise TypeError('The given parameter must be a quantum gate.')
-        elif gate.length != self.length:
-            raise ValueError(
-                'This gate can only be used to ' + str(gate.length) + '-qubits, ' + str(self.length) + ' qubits found.')
+        if not isinstance(sequence, Sequence):
+            raise TypeError('The parameter must be a Sequence instance.')
+        elif sequence.length != self.length:
+            raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
+            gate_matrix = np.matrix(np.identity(int(pow(2, self.length)), dtype=np.complex))
+            base_matrix = sequence.get_gate().matrix
+
+            if not Gate.can_use_controls(base_matrix):
+                all_sequences = sequence.alter_controls()
+            else:
+                all_sequences = [sequence]
+
+            for s in all_sequences:
+                targets = s.get_decimal_states()
+
+                for i in range(2):
+                    for j in range(2):
+                        gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
+
+            gate = Gate(gate_matrix)
+
             # Multiply matrices.
             self.vector = self.vector.dot(gate.matrix)
 

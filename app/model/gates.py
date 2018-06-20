@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
 from enum import Enum
+
 from app.model.gate import Gate
 
 

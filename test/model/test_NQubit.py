@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 from app.model.nqubit import NQubit
 from app.model.gate import Gate
 import numpy as np
@@ -93,71 +94,6 @@ class TestNQubit(TestCase):
         self.assertEquals(self.n3_5.length, 3)
         self.assertEquals(self.n3_6.length, 3)
         self.assertEquals(self.n3_7.length, 3)
-
-    def test_apply_gate(self):
-        gate2x2_i = Gate(np.matrix([[1, 0],
-                                          [0, 1]], dtype=np.complex))
-        gate2x2_h = Gate(np.matrix([[1,  1],
-                                          [1, -1]], dtype=np.complex))
-        gate4x4 = Gate(np.matrix([[-1. + 1.j,  0. + 1.j, -10. - 1.j, 1. + 0.j],
-                                        [-5. + 0.j, -2. + 0.j,   5. - 3.j, 0. + 1.j],
-                                        [-5. + 1.j,  0. + 1.j,   2. - 0.j, 2. - 1.j],
-                                        [ 2. + 3.j,  1. - 1.j,   4. + 2.j, 0. + 4.j]
-                                                                ], dtype=np.complex))
-
-        # Check exception.
-        n_copy = self.n1_0.copy()
-        self.failUnlessRaises(TypeError, n_copy.apply_gate, '')
-        self.failUnlessRaises(ValueError, n_copy.apply_gate, gate4x4)
-
-        # Check identity matrix with 1 qubit as |0>
-        n_copy = self.n1_0.copy()
-        n_copy.apply_gate(gate2x2_i)
-        self.assertEquals(self.n1_0, n_copy)
-
-        # Check identity matrix with 1 qubit as |1>
-        n_copy = self.n1_1.copy()
-        n_copy.apply_gate(gate2x2_i)
-        self.assertEquals(self.n1_1, n_copy)
-
-        # Check Hadamard matrix with 1 qubit as |0>
-        n_copy = self.n1_0.copy()
-        n_copy.apply_gate(gate2x2_h)
-        hadamard1_0 = NQubit(1)
-        hadamard1_0.vector = np.matrix([[1.+0.j,  1.+0.j]], dtype=np.complex)
-        hadamard1_0.factor = 1
-        self.assertEquals(n_copy, hadamard1_0)
-
-        # Check Hadamard matrix with 1 qubit as |1>
-        n_copy = self.n1_1.copy()
-        n_copy.apply_gate(gate2x2_h)
-        hadamard1_1 = NQubit(1)
-        hadamard1_1.vector = np.matrix([[1.+0.j,  -1.+0.j]], dtype=np.complex)
-        hadamard1_1.factor = 1
-        self.assertEquals(n_copy, hadamard1_1)
-
-        # Check superior matrix: 2 qubits, 4x4 matrix.
-        n_copy = self.n2_3.copy()
-        n_copy.vector = np.matrix([[0.+0.j,  1.+0.j,  0.+0.j,  0.+0.j]], dtype=np.complex)
-        n_copy.apply_gate(gate4x4)
-        target = NQubit(2)
-        target.vector = np.matrix([[-5.+0.j, -2.+0.j,  5.-3.j,  0.+1.j]], dtype=np.complex)
-        target.factor = 6
-        self.assertEquals(n_copy, target)
-
-    def test_copy(self):
-        n_copy = self.n1_0.copy()
-        self.assertEquals(self.n1_0, n_copy)
-
-        n_copy = self.n1_0.copy()
-        n_copy.factor = 10
-        self.assertNotEquals(self.n1_0, n_copy)
-
-        n_copy = self.n1_0.copy()
-        gate2x2_hadamard = Gate(np.matrix([[1,  1],
-                                                    [1, -1]], dtype=np.complex))
-        n_copy.apply_gate(gate2x2_hadamard)
-        self.assertTrue(self.n1_0 != n_copy)
 
     def test_to_file(self):
         self.assertEquals(self.n1_0.to_file(), "(1,0);0")

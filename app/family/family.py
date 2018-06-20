@@ -2,7 +2,6 @@
 import os
 
 from app.family.member import Member
-from app.controller.gates import Gates
 from app.model.gates import EnumGates
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
@@ -88,7 +87,7 @@ class Family:
 
         for seq in Sequence.generate_all_with_gate(gate, self.length):
             nqubit = self._list[parent_id].nqubit.copy()
-            Gates.apply_gate(nqubit, seq)
+            nqubit.apply_gate(seq)
 
             if not self._contains(nqubit):
                 new_node = Member(len(self._list), nqubit, self._list[parent_id].identifier,

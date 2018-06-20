@@ -6,7 +6,6 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 
 
 class Gate:
-
     def __init__(self, matrix, identifier='A'):
 
         if not isinstance(matrix, np.matrix):
@@ -26,18 +25,22 @@ class Gate:
 
     def _get_matrix(self):
         return self._matrix
+
     matrix = property(_get_matrix)
 
     def _get_identifier(self):
         return self._identifier
+
     identifier = property(_get_identifier)
 
     def _get_initial(self):
         return self._identifier[0]
+
     initial = property(_get_initial)
 
     def _get_length(self):
         return self._length
+
     length = property(_get_length)
 
     def __repr__(self):
@@ -75,3 +78,17 @@ class Gate:
         """
 
         return not self == other
+
+    @staticmethod
+    def can_use_controls(matrix):
+        """
+        States whether the gate represented by the matrix can use control qubits or not.
+
+        :param matrix: Numpy matrix
+        :return: True if control qubits can be used, false otherwise.
+        """
+
+        return not np.array_equal(matrix, np.matrix([[1, 1],
+                                                     [1, -1]], dtype=np.complex)) \
+               and not np.array_equal(matrix, np.matrix([[-1, 1],
+                                                         [1, 1]], dtype=np.complex))
