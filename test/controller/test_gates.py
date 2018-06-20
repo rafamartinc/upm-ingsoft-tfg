@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
+
 from app.controller.gates import Gates
 from app.model.nqubit import NQubit
 from app.model.gate import Gate
 from app.model.sequence import Sequence
 
 import numpy as np
-from math import sqrt
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -15,8 +15,8 @@ class TestGates(TestCase):
 
     def test_gate_h_n1(self):
 
-        h = Gate(np.matrix([[1 / sqrt(2), 1 / sqrt(2)],
-                            [1 / sqrt(2), - 1 / sqrt(2)]], dtype=np.complex), 'Hadamard')
+        h = Gate(np.matrix([[1, 1],
+                            [1, - 1]], dtype=np.complex), 'Hadamard')
         s = Sequence(h)
 
         q = NQubit(1, 0)
@@ -41,8 +41,8 @@ class TestGates(TestCase):
 
     def test_gate_h_n2_bg(self):
 
-        h = Gate(np.matrix([[1 / sqrt(2), 1 / sqrt(2)],
-                            [1 / sqrt(2), - 1 / sqrt(2)]], dtype=np.complex), 'Hadamard')
+        h = Gate(np.matrix([[1, 1],
+                            [1, - 1]], dtype=np.complex), 'Hadamard')
         s1 = Sequence('0', h)
         s2 = Sequence('1', h)
 
@@ -116,8 +116,8 @@ class TestGates(TestCase):
 
     def test_gate_h_n2_gb(self):
 
-        h = Gate(np.matrix([[1 / sqrt(2), 1 / sqrt(2)],
-                            [1 / sqrt(2), - 1 / sqrt(2)]], dtype=np.complex), 'Hadamard')
+        h = Gate(np.matrix([[1, 1],
+                            [1, - 1]], dtype=np.complex), 'Hadamard')
         s1 = Sequence(h, '0')
         s2 = Sequence(h, '1')
 

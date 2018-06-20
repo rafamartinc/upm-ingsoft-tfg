@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+
 from app.model.gate import Gate
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
@@ -33,8 +34,7 @@ class Gates:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
-            base_matrix = np.matrix([[1,  1],
-                                     [1, -1]], dtype=np.complex)
+            base_matrix = sequence.get_gate().matrix
 
             all_sequences = sequence.alter_controls()
             for s in all_sequences:
@@ -63,8 +63,7 @@ class Gates:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
-            base_matrix = np.matrix([[-1,  1],
-                                     [1, 1]], dtype=np.complex)
+            base_matrix = sequence.get_gate().matrix
 
             all_sequences = sequence.alter_controls()
             for s in all_sequences:
@@ -103,8 +102,7 @@ class Gates:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
-            base_matrix = np.matrix([[1,  0],
-                                     [0, 1j]], dtype=np.complex)
+            base_matrix = sequence.get_gate().matrix
             targets = sequence.get_decimal_states()
 
             for i in range(2):
@@ -130,8 +128,7 @@ class Gates:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
-            base_matrix = np.matrix([[1j,  0],
-                                     [0, 1]], dtype=np.complex)
+            base_matrix = sequence.get_gate().matrix
             targets = sequence.get_decimal_states()
 
             for i in range(2):
@@ -150,24 +147,6 @@ class Gates:
         """
 
         Gates.gate_v(nqubit, sequence)
-
-    @staticmethod
-    def gate_g(nqubit):
-        """
-        Implements the G Quantum Gate.
-        G equals C^2(V), as it only converts |1>*|1>*|1> in |1>*|1>*V|1>.
-
-        :return: Resulting nqubit.
-        """
-
-        if not isinstance(nqubit, NQubit):
-            raise TypeError('The first parameter must be a NQubit instance.')
-        elif nqubit.length != 3:
-            raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.length) + ' qubits found.')
-        else:
-            seq = Sequence('1', '1', 'G')
-            # Apply the V gate to the |1>*|1>*|1>=|7> state
-            Gates.gate_v(nqubit, seq)
 
     @staticmethod
     def gate_z(nqubit, sequence):
@@ -189,8 +168,7 @@ class Gates:
         else:
             # C^k(Z) equals (C^k(V))^2.
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
-            base_matrix = np.matrix([[1,  0],
-                                     [0, -1]], dtype=np.complex)
+            base_matrix = sequence.get_gate().matrix
             targets = sequence.get_decimal_states()
 
             for i in range(2):
@@ -216,8 +194,7 @@ class Gates:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
-            base_matrix = np.matrix([[-1,  0],
-                                     [0, 1]], dtype=np.complex)
+            base_matrix = sequence.get_gate().matrix
             targets = sequence.get_decimal_states()
 
             for i in range(2):
@@ -257,8 +234,7 @@ class Gates:
         else:
             # X equals HZH.
             gate_matrix = np.matrix(np.identity(int(pow(2, nqubit.length)), dtype=np.complex))
-            base_matrix = np.matrix([[0, 1],
-                                     [1, 0]], dtype=np.complex)
+            base_matrix = sequence.get_gate().matrix
             targets = sequence.get_decimal_states()
 
             for i in range(2):
@@ -267,23 +243,3 @@ class Gates:
 
             gate = Gate(gate_matrix)
             nqubit.apply_gate(gate)
-
-    @staticmethod
-    def gate_toffoli(nqubit):
-        """
-        Implements the Toffoli Quantum Gate. If the first two bits are in the state |1> , it applies a Pauli-X
-        (or NOT) on the third bit, else it does nothing. It is an example of a controlled gate.
-
-        Source: https://en.wikipedia.org/wiki/Quantum_gate#Toffoli_gate
-
-        :return: Resulting nqubit.
-        """
-
-        if not isinstance(nqubit, NQubit):
-            raise TypeError('The first parameter must be a NQubit instance.')
-        elif nqubit.length != 1:
-            raise ValueError('This gate can only be applied to 3-qubits, ' + str(nqubit.length) + ' qubits found.')
-        else:
-            seq = Sequence('1', '1', 'G')
-            # Apply X as HZH
-            Gates.gate_x(nqubit, seq)

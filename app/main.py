@@ -4,8 +4,7 @@ import time
 from app.family.family import Family
 from app.view.view import View
 
-import numpy as np
-from app.model.gate import Gate
+from app.model.gates import EnumGates
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
 from app.controller.gates import Gates
@@ -16,16 +15,10 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 def main():
     start_time = time.time()
 
-    #Family(length=2, max_complexity=50)
+    Family(length=2, max_complexity=50)
 
-    hadamard = Gate(np.matrix([[1,  1],
-                               [1, -1]], dtype=np.complex), 'H')
-    v_gate = Gate(np.matrix([[1,  0],
-                             [0, 1j]], dtype=np.complex), 'V')
-    x_gate = Gate(np.matrix([[0,  1],
-                             [1,  0]], dtype=np.complex), 'V')
-    z_gate = Gate(np.matrix([[1,  0],
-                             [0, -1]], dtype=np.complex), 'V')
+    hadamard = EnumGates.H.gate
+    v_gate = EnumGates.V.gate
 
     nqubit = NQubit(5, state=0)
     View.display(str(nqubit.factor) + '. ' + str(nqubit.vector))

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from app.model.gate import Gate
+from app.model.gates import EnumGates
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -22,7 +23,7 @@ class Sequence:
         while i < len(args):
 
             # Check type and value of each element of the sequence.
-            if isinstance(args[i], Gate):
+            if isinstance(args[i], Gate) or isinstance(args[i], EnumGates):
                 if args[i].length != 1:
                     raise ValueError('The Gate provided affects more than one qubit.')
             elif args[i] != '0' and args[i] != '1':

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
-import numpy as np
 
 from app.family.member import Member
 from app.controller.gates import Gates
-from app.model.gate import Gate
+from app.model.gates import EnumGates
 from app.model.nqubit import NQubit
 from app.model.sequence import Sequence
 from app.view.view import View
@@ -39,13 +38,17 @@ class Family:
                 self._list[str(new_node.nqubit)] = new_node
 
             self._allowed_gates = [
-                {'f': Gates.gate_v0, 'tag': 'V1'},
-                {'f': Gates.gate_v1, 'tag': 'V0'},
-                {'f': Gates.gate_x, 'tag': 'X'},
-                {'f': Gates.gate_z0, 'tag': 'Z1'},
-                {'f': Gates.gate_z1, 'tag': 'Z0'},
-                {'f': Gates.gate_h0, 'tag': 'H1'},
-                {'f': Gates.gate_h1, 'tag': 'H0'}
+
+                {'f': Gates.gate_v, 'g': EnumGates.V.gate},
+                {'f': Gates.gate_v0, 'g': EnumGates.V_sym.gate},
+
+                {'f': Gates.gate_x, 'g': EnumGates.X.gate},
+
+                {'f': Gates.gate_z, 'g': EnumGates.Z.gate},
+                {'f': Gates.gate_z0, 'g': EnumGates.Z_sym.gate},
+
+                {'f': Gates.gate_h, 'g': EnumGates.H.gate},
+                {'f': Gates.gate_h0, 'g': EnumGates.H_sym.gate}
             ]
 
             self._generate(max_complexity)
@@ -87,13 +90,13 @@ class Family:
         :param complexity: Current complexity.
         """
 
-        for seq in Sequence.generate_all_with_gate(Gate(np.matrix([[1,0],[0,1]])), self.length):
+        for seq in Sequence.generate_all_with_gate(gate['g'], self.length):
             nqubit = self._list[parent_id].nqubit.copy()
             gate['f'](nqubit, seq)
 
             if not self._contains(nqubit):
                 new_node = Member(len(self._list), nqubit, self._list[parent_id].identifier,
-                                  gate['tag'], seq, self._list[parent_id].complexity + 1)
+                                  gate['g'].identifier, seq, self._list[parent_id].complexity + 1)
                 self._list[str(new_node.nqubit)] = new_node
 
                 # Export to file
