@@ -39,13 +39,13 @@ class Family:
                 self._list[str(new_node.nqubit)] = new_node
 
             self._allowed_gates = [
-                {'f': Gates.gate_v0, 'tag': 'V0'},
-                {'f': Gates.gate_v1, 'tag': 'V1'},
+                {'f': Gates.gate_v0, 'tag': 'V1'},
+                {'f': Gates.gate_v1, 'tag': 'V0'},
                 {'f': Gates.gate_x, 'tag': 'X'},
-                {'f': Gates.gate_z0, 'tag': 'Z0'},
-                {'f': Gates.gate_z1, 'tag': 'Z1'},
-                {'f': Gates.gate_h0, 'tag': 'H0'},
-                {'f': Gates.gate_h1, 'tag': 'H1'}
+                {'f': Gates.gate_z0, 'tag': 'Z1'},
+                {'f': Gates.gate_z1, 'tag': 'Z0'},
+                {'f': Gates.gate_h0, 'tag': 'H1'},
+                {'f': Gates.gate_h1, 'tag': 'H0'}
             ]
 
             self._generate(max_complexity)

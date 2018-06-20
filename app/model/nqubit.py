@@ -8,6 +8,7 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 
 
 class NQubit:
+
     def __init__(self, length, state=0):
         """
         Creates the array that represents all "2*length" possible quantum states, given a set of "n" qubits.

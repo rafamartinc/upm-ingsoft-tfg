@@ -59,6 +59,15 @@ class TestSequence(TestCase):
         self.assertEquals(self.sequence3a.array, ['0', '0', self.g])
         self.assertEquals(self.sequence3b.array, ['1', '1', self.g])
 
+    def test_get_gate(self):
+        self.assertEquals(self.g, self.sequence1.get_gate())
+        self.assertEquals(self.g, self.sequence2a.get_gate())
+        self.assertEquals(self.g, self.sequence2b.get_gate())
+        self.assertEquals(self.g, self.sequence2c.get_gate())
+        self.assertEquals(self.g, self.sequence2d.get_gate())
+        self.assertEquals(self.g, self.sequence3a.get_gate())
+        self.assertEquals(self.g, self.sequence3b.get_gate())
+
     def test_get_decimal_states(self):
         self.assertEquals(self.sequence1.get_decimal_states(), (0, 1))
         self.assertEquals(self.sequence2a.get_decimal_states(), (0, 2))

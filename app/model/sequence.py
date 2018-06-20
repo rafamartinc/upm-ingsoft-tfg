@@ -66,6 +66,21 @@ class Sequence:
 
         return result
 
+    def get_gate(self):
+        """
+        Returns the gate contained in the sequence.
+
+        :return: Gate object.
+        """
+
+        result = None
+
+        for i in self._seq:
+            if isinstance(i, Gate):
+                result = i
+
+        return result
+
     def get_decimal_states(self):
         """
         Given certain control qubits, decides which quantum states are going to be affected by the
