@@ -38,17 +38,13 @@ class Family:
                 self._list[str(new_node.nqubit)] = new_node
 
             self._allowed_gates = [
-
-                {'f': Gates.gate_v, 'g': EnumGates.V.gate},
-                {'f': Gates.gate_v0, 'g': EnumGates.V_sym.gate},
-
-                {'f': Gates.gate_x, 'g': EnumGates.X.gate},
-
-                {'f': Gates.gate_z, 'g': EnumGates.Z.gate},
-                {'f': Gates.gate_z0, 'g': EnumGates.Z_sym.gate},
-
-                {'f': Gates.gate_h, 'g': EnumGates.H.gate},
-                {'f': Gates.gate_h0, 'g': EnumGates.H_sym.gate}
+                EnumGates.V.gate,
+                EnumGates.V_sym.gate,
+                EnumGates.X.gate,
+                EnumGates.Z.gate,
+                EnumGates.Z_sym.gate,
+                EnumGates.H.gate,
+                EnumGates.H_sym.gate
             ]
 
             self._generate(max_complexity)
@@ -90,13 +86,13 @@ class Family:
         :param complexity: Current complexity.
         """
 
-        for seq in Sequence.generate_all_with_gate(gate['g'], self.length):
+        for seq in Sequence.generate_all_with_gate(gate, self.length):
             nqubit = self._list[parent_id].nqubit.copy()
-            gate['f'](nqubit, seq)
+            Gates.apply_gate(nqubit, seq)
 
             if not self._contains(nqubit):
                 new_node = Member(len(self._list), nqubit, self._list[parent_id].identifier,
-                                  gate['g'].identifier, seq, self._list[parent_id].complexity + 1)
+                                  gate.identifier, seq, self._list[parent_id].complexity + 1)
                 self._list[str(new_node.nqubit)] = new_node
 
                 # Export to file
