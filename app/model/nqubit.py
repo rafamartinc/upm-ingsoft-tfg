@@ -93,7 +93,6 @@ class NQubit:
         elif sequence.length != self.length:
             raise ValueError('The length of the sequence does not match the number of qubits given.')
         else:
-            gate_matrix = np.matrix(np.identity(int(pow(2, self.length)), dtype=np.complex))
             base_matrix = sequence.get_gate().matrix
 
             if not Gate.can_use_controls(base_matrix):
@@ -101,17 +100,16 @@ class NQubit:
             else:
                 all_sequences = [sequence]
 
+            new_vector = self.vector.copy()
+
+            # Apply gate.
             for s in all_sequences:
                 targets = s.get_decimal_states()
 
                 for i in range(2):
-                    for j in range(2):
-                        gate_matrix[targets[i], targets[j]] = base_matrix[i, j]
-
-            gate = Gate(gate_matrix)
-
-            # Multiply matrices.
-            self.vector = self.vector.dot(gate.matrix)
+                    new_vector[0, targets[i]] = base_matrix[i, 0] * self.vector[0, targets[0]]\
+                                                + base_matrix[i, 1] * self.vector[0, targets[1]]
+            self.vector = new_vector
 
             # Try to divide all coefficients by two.
             self._simplify()

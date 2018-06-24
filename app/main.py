@@ -14,7 +14,7 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 def main():
     start_time = time.time()
 
-    Family(length=1, max_complexity=50)
+    Family(length=3, max_complexity=50)
 
     hadamard = EnumGates.H.gate
     v_gate = EnumGates.V.gate
