@@ -2,9 +2,9 @@ from unittest import TestCase
 import numpy as np
 
 from app.family.member import Member
-from app.model.nqubit import NQubit
+from app.model.quantumstate import QuantumState
 from app.model.sequence import Sequence
-from app.model.gate import Gate
+from app.model.quantumgate import QuantumGate
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -12,26 +12,26 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 class TestGate(TestCase):
 
     def setUp(self):
-        s = Sequence(Gate(np.matrix(np.identity(2), dtype=np.complex_)))
+        s = Sequence(QuantumGate(np.matrix(np.identity(2), dtype=np.complex_)))
 
-        self.parent = Member(0, NQubit(1))
-        self.child = Member(1, NQubit(1), parent=0, gate='G', sequence=s, complexity=1)
+        self.parent = Member(0, QuantumState(1))
+        self.child = Member(1, QuantumState(1), parent=0, gate='G', sequence=s, complexity=1)
 
     def test___init__(self):
-        self.failUnlessRaises(TypeError, Member, '', NQubit(1))
+        self.failUnlessRaises(TypeError, Member, '', QuantumState(1))
         self.failUnlessRaises(TypeError, Member, 0, '')
-        self.failUnlessRaises(TypeError, Member, 0, NQubit(1), parent='')
-        self.failUnlessRaises(TypeError, Member, 0, NQubit(1), gate=0)
-        self.failUnlessRaises(TypeError, Member, 0, NQubit(1), sequence='')
-        self.failUnlessRaises(TypeError, Member, 0, NQubit(1), complexity='')
+        self.failUnlessRaises(TypeError, Member, 0, QuantumState(1), parent='')
+        self.failUnlessRaises(TypeError, Member, 0, QuantumState(1), gate=0)
+        self.failUnlessRaises(TypeError, Member, 0, QuantumState(1), sequence='')
+        self.failUnlessRaises(TypeError, Member, 0, QuantumState(1), complexity='')
 
     def test_identifier(self):
         self.assertEquals(self.parent.identifier, 0)
         self.assertEquals(self.child.identifier, 1)
 
     def test_nqubit(self):
-        self.assertEquals(self.parent.nqubit, NQubit(1))
-        self.assertEquals(self.child.nqubit, NQubit(1))
+        self.assertEquals(self.parent.nqubit, QuantumState(1))
+        self.assertEquals(self.child.nqubit, QuantumState(1))
 
     def test_parent(self):
         self.assertEquals(self.parent.parent, None)
@@ -44,7 +44,7 @@ class TestGate(TestCase):
     def test_sequence(self):
         self.assertEquals(self.parent.sequence, None)
 
-        s = Sequence(Gate(np.matrix(np.identity(2), dtype=np.complex_)))
+        s = Sequence(QuantumGate(np.matrix(np.identity(2), dtype=np.complex_)))
         self.assertEquals(self.child.sequence.length, s.length)
         self.assertEquals(self.child.sequence.array[0], s.array[0])
 

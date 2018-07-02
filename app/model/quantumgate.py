@@ -5,7 +5,7 @@ import numpy as np
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
 
-class Gate:
+class QuantumGate:
     def __init__(self, matrix, identifier='A'):
 
         if not isinstance(matrix, np.matrix):
@@ -61,7 +61,7 @@ class Gate:
 
         result = True
 
-        if not isinstance(other, Gate) \
+        if not isinstance(other, QuantumGate) \
                 or not np.array_equal(self.matrix, other.matrix) \
                 or self.length != other.length \
                 or self.identifier != other.identifier:

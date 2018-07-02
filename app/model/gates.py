@@ -2,7 +2,7 @@
 import numpy as np
 from enum import Enum
 
-from app.model.gate import Gate
+from app.model.quantumgate import QuantumGate
 
 
 class EnumGates(Enum):
@@ -25,7 +25,7 @@ class EnumGates(Enum):
 
         Source: https://en.wikipedia.org/wiki/Quantum_gate#Hadamard_gate
     """
-    H = Gate(np.matrix([[1,  1],
+    H = QuantumGate(np.matrix([[1,  1],
                         [1, -1]], dtype=np.complex), 'Hadamard')
     # ---------------------------------------------------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ class EnumGates(Enum):
     """ -------------------------------------------------------------------------------------------------------------
     Implements the V Quantum Gate.
     """
-    V = Gate(np.matrix([[1,  0],
+    V = QuantumGate(np.matrix([[1,  0],
                         [0, 1j]], dtype=np.complex), 'V')
     # ---------------------------------------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ class EnumGates(Enum):
         Implements the Pauli-Z Quantum Gate. It equates to a rotation around the Z-axis of the Bloch
         sphere by π radians. Z equals V^2, as it negates the real part of the last quantum state.
     """
-    Z = Gate(np.matrix([[1,  0],
+    Z = QuantumGate(np.matrix([[1,  0],
                         [0, -1]], dtype=np.complex), 'Z')
     # ---------------------------------------------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ class EnumGates(Enum):
 
         Source: https://en.wikipedia.org/wiki/Quantum_gate#Pauli-X_gate_(=_NOT_gate)
     """
-    X = Gate(np.matrix([[0, 1],
+    X = QuantumGate(np.matrix([[0, 1],
                         [1, 0]], dtype=np.complex), 'X')
     # ---------------------------------------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ class EnumGates(Enum):
     """ -------------------------------------------------------------------------------------------------------------
         Implements a modified version of the Hadamard Quantum Gate.
     """
-    H_sym = Gate(np.matrix([[-1,  1],
+    H_sym = QuantumGate(np.matrix([[-1,  1],
                             [1, 1]], dtype=np.complex), 'H_sym')
     # ---------------------------------------------------------------------------------------------------------------
 
@@ -69,7 +69,7 @@ class EnumGates(Enum):
     """ -------------------------------------------------------------------------------------------------------------
         Implements the V Quantum Gate, altered to modify the state |0> instead of state |1>.
     """
-    V_sym = Gate(np.matrix([[1j,  0],
+    V_sym = QuantumGate(np.matrix([[1j,  0],
                             [0, 1]], dtype=np.complex), 'V_sym')
     # ---------------------------------------------------------------------------------------------------------------
 
@@ -77,6 +77,6 @@ class EnumGates(Enum):
     """ -------------------------------------------------------------------------------------------------------------
     Implements a modified version of the Pauli-Z Quantum Gate, that affects state |0> instead of |1>.
     """
-    Z_sym = Gate(np.matrix([[-1,  0],
+    Z_sym = QuantumGate(np.matrix([[-1,  0],
                             [0, 1]], dtype=np.complex), 'Z_sym')
     # ---------------------------------------------------------------------------------------------------------------

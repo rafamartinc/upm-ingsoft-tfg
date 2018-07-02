@@ -1,7 +1,7 @@
 import numpy as np
 from unittest import TestCase
 from app.model.sequence import Sequence
-from app.model.gate import Gate
+from app.model.quantumgate import QuantumGate
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
@@ -9,7 +9,7 @@ __author__ = 'Rafael Martin-Cuevas Redondo'
 class TestSequence(TestCase):
 
     def setUp(self):
-        self.g = Gate(np.matrix(np.identity(2, dtype=np.complex)), 'A')
+        self.g = QuantumGate(np.matrix(np.identity(2, dtype=np.complex)), 'A')
         self.sequence1 = Sequence(self.g)
         self.sequence2a = Sequence(self.g, '0')
         self.sequence2b = Sequence(self.g, '1')
@@ -29,7 +29,7 @@ class TestSequence(TestCase):
         self.failUnlessRaises(TypeError, Sequence, self.g, 1)           # Integer is not valid.
         self.failUnlessRaises(ValueError, Sequence, self.g, self.g)     # Too many gates.
 
-        gate = Gate(np.matrix(np.identity(4, dtype=np.complex_)))
+        gate = QuantumGate(np.matrix(np.identity(4, dtype=np.complex_)))
         self.failUnlessRaises(ValueError, Sequence, gate)               # 2-qubit gate.
 
     def test___repr__(self):
@@ -191,7 +191,7 @@ class TestSequence(TestCase):
 
         # Exception cases.
 
-        gate = Gate(np.matrix(np.identity(4, dtype=np.complex_)))
+        gate = QuantumGate(np.matrix(np.identity(4, dtype=np.complex_)))
         self.failUnlessRaises(TypeError, Sequence.generate_all_with_gate, '', 1)
         self.failUnlessRaises(ValueError, Sequence.generate_all_with_gate, gate, 1)
         self.failUnlessRaises(TypeError, Sequence.generate_all_with_gate, self.g, '')

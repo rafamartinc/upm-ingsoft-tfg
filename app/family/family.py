@@ -3,7 +3,7 @@ import os
 
 from app.family.member import Member
 from app.model.gates import EnumGates
-from app.model.nqubit import NQubit
+from app.model.quantumstate import QuantumState
 from app.model.sequence import Sequence
 from app.view.view import View
 
@@ -33,7 +33,7 @@ class Family:
             self._list = {}
 
             for i in range(pow(2, self.length)):
-                new_node = Member(len(self._list), NQubit(self.length, i))
+                new_node = Member(len(self._list), QuantumState(self.length, i))
                 self._list[str(new_node.nqubit)] = new_node
 
             self._allowed_gates = [
@@ -102,7 +102,7 @@ class Family:
                     output = open(file_name, 'w')
                 output.write(new_node.to_file() + ';')
 
-                output.write(str(nqubit.factor - self._list[parent_id].nqubit.factor))
+                output.write(str(nqubit.level - self._list[parent_id].nqubit.level))
 
                 output.write('\n')
                 output.close()

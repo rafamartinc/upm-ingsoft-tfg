@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from app.model.nqubit import NQubit
+from app.model.quantumstate import QuantumState
 from app.model.sequence import Sequence
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
@@ -16,7 +16,7 @@ class Member:
 
         if not isinstance(identifier, int):
             raise TypeError('The first parameter must be a whole number.')
-        elif not isinstance(nqubit, NQubit):
+        elif not isinstance(nqubit, QuantumState):
             raise TypeError('The second parameter must be a NQubit instance.')
         elif not isinstance(parent, int) and parent is not None:
             raise TypeError('The third parameter must be the id of another Node.')

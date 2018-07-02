@@ -2,13 +2,13 @@
 from math import log
 import numpy as np
 
-from app.model.gate import Gate
+from app.model.quantumgate import QuantumGate
 from app.model.sequence import Sequence
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
 
 
-class NQubit:
+class QuantumState:
 
     def __init__(self, length, state=0):
         """
@@ -29,15 +29,15 @@ class NQubit:
             self._length = length
 
             # Vector of n qubits, as Gaussian integers.
-            self.vector = np.matrix(np.zeros(int(pow(2, self.length)), dtype=np.complex_))
+            self._vector = np.matrix(np.zeros(int(pow(2, self.length)), dtype=np.complex_))
 
             # Normalization factor: [sqrt(2)]^(-k). Starts as sqrt(2)^(-0) = 1
-            self.factor = 0
+            self._level = 0
 
             for i in range(1, self.length):
-                self.vector[0, i] = 0.0 + 0.0j  # Initialize each position of the array.
+                self._vector[0, i] = 0.0 + 0.0j  # Initialize each position of the array.
 
-            self.vector[0, state] = 1.0 + 0.0j  # All n-qubits are initially set to |0>, with no superposition.
+            self._vector[0, state] = 1.0 + 0.0j  # All n-qubits are initially set to |0>, with no superposition.
 
     @property
     def vector(self):
@@ -59,19 +59,19 @@ class NQubit:
             self._length = int(log(vector.size, 2))
 
     @property
-    def factor(self):
+    def level(self):
         """
         factor is a property
         This is the getter method
         """
-        return self._factor
+        return self._level
 
-    @factor.setter
-    def factor(self, value):
+    @level.setter
+    def level(self, value):
         """
         This is the setter method
         """
-        self._factor = value
+        self._level = value
 
     @property
     def length(self):
@@ -95,7 +95,7 @@ class NQubit:
         else:
             base_matrix = sequence.get_gate().matrix
 
-            if not Gate.can_use_controls(base_matrix):
+            if not QuantumGate.can_use_controls(base_matrix):
                 all_sequences = sequence.alter_controls()
             else:
                 all_sequences = [sequence]
@@ -119,7 +119,7 @@ class NQubit:
             for i in range(int(pow(2, self.length))):
                 sum_squares += self.vector[0, i].real ** 2
                 sum_squares += self.vector[0, i].imag ** 2
-            self.factor = int(log(sum_squares, 2))
+            self.level = int(log(sum_squares, 2))
 
     def copy(self):
         """
@@ -129,9 +129,9 @@ class NQubit:
         :return: Copied n-qubit.
         """
 
-        result = NQubit(self.length)
+        result = QuantumState(self.length)
         result.vector = self.vector.copy()
-        result.factor = self.factor
+        result.level = self.level
         return result
 
     def to_file(self):
@@ -149,7 +149,7 @@ class NQubit:
             if i != pow(2, self.length) - 1:
                 result += ','
 
-        result += ');' + str(self.factor)
+        result += ');' + str(self.level)
 
         return result
 
@@ -168,7 +168,7 @@ class NQubit:
             if i != pow(2, self.length) - 1:
                 result += ', '
 
-        result += ') * sqrt(2)^(' + str(-self.factor) + ')'
+        result += ') * sqrt(2)^(' + str(-self.level) + ')'
 
         return result
 
@@ -179,7 +179,7 @@ class NQubit:
         :return: True if both are equal, False otherwise.
         """
 
-        return nqubit.factor == self.factor \
+        return nqubit.level == self.level \
                and nqubit.length == self.length \
                and np.array_equal(nqubit.vector, self.vector)
 

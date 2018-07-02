@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from app.model.gate import Gate
+from app.model.quantumgate import QuantumGate
 from app.model.gates import EnumGates
 
 __author__ = 'Rafael Martin-Cuevas Redondo'
@@ -23,14 +23,14 @@ class Sequence:
         while i < len(args):
 
             # Check type and value of each element of the sequence.
-            if isinstance(args[i], Gate) or isinstance(args[i], EnumGates):
+            if isinstance(args[i], QuantumGate) or isinstance(args[i], EnumGates):
                 if args[i].length != 1:
                     raise ValueError('The Gate provided affects more than one qubit.')
             elif args[i] != '0' and args[i] != '1':
                 raise TypeError('Element no. ' + str(i) + ' must either be a control (a 0 or a 1), or a Gate.')
 
             # Count number of qubits on which the gate is supposed to be applied.
-            if isinstance(args[i], Gate):
+            if isinstance(args[i], QuantumGate):
                 count_g += 1
 
             i += 1
@@ -77,7 +77,7 @@ class Sequence:
         result = None
 
         for i in self._seq:
-            if isinstance(i, Gate):
+            if isinstance(i, QuantumGate):
                 result = i
 
         return result
@@ -98,7 +98,7 @@ class Sequence:
             if i == '0' or i == '1':
                 int1 += i
                 int2 += i
-            elif isinstance(i, Gate):
+            elif isinstance(i, QuantumGate):
                 int1 += '0'
                 int2 += '1'
 
@@ -173,7 +173,7 @@ class Sequence:
         :return: List of sequences.
         """
 
-        if not isinstance(gate, Gate):
+        if not isinstance(gate, QuantumGate):
             raise TypeError('The gate must be a Gate instance.')
         elif gate.length != 1:
             raise ValueError('The gate must have a length of one.')
